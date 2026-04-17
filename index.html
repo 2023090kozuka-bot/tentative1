@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第85回 城北祭 | 男前 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', 'Noto Serif JP', serif; 
+            background-color: #000;
+            color: #fff; 
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        #opening-loader {
+            position: fixed; inset: 0; z-index: 10000; background: #fff; color: #000;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .loaded #opening-loader { transform: translateY(-100%); }
+
+        .bg-grid { 
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .hero-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        .hero-bg-text {
+            position: absolute;
+            font-size: clamp(8rem, 25vw, 24rem);
+            font-weight: 900;
+            color: rgba(255,255,255,0.03);
+            z-index: 0;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hero-text { 
+            position: relative;
+            z-index: 1;
+            font-family: 'Noto Serif JP', serif;
+            font-size: clamp(3.5rem, 15vw, 12rem); 
+            line-height: 1; 
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff 40%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            letter-spacing: -0.05em;
+        }
+
+        .search-input {
+            background: transparent;
+            border-bottom: 2px solid #222;
+            transition: all 0.4s ease;
+            outline: none;
+            text-align: center;
+            border-radius: 0;
+        }
+        .search-input:focus { border-bottom-color: #fff; }
+
+        /* アコーディオン */
+        .building-header {
+            background: #0a0a0a;
+            border-bottom: 1px solid #1a1a1a;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .building-header:hover { background: #111; }
+        .building-content {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .building-section.is-open .building-content { max-height: 3000px; }
+        .icon-plus { transition: transform 0.4s ease; display: inline-block; }
+        .building-section.is-open .icon-plus { transform: rotate(45deg); }
+
+        /* タイムテーブル */
+        .timetable-container {
+            display: grid;
+            grid-template-columns: 60px repeat(5, 1fr);
+            gap: 1px;
+            background: #1a1a1a;
+            border: 1px solid #1a1a1a;
+            min-width: 900px;
+        }
+        .timetable-header {
+            background: #0a0a0a;
+            padding: 1.5rem 0.5rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .time-label {
+            background: #080808;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 900;
+            color: #444;
+            height: 100px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .venue-column {
+            background: #000;
+            position: relative;
+            height: 700px;
+        }
+        .event-block {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            background: #111;
+            border-left: 3px solid #fff;
+            padding: 0.5rem;
+            font-size: 11px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-top: 1px solid #222;
+        }
+        .event-block:hover { background: #1a1a1a; z-index: 5; }
+
+        .schedule-tab-btn {
+            position: relative;
+            padding-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .schedule-tab-btn.active { color: #fff; }
+        .schedule-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: #fff;
+        }
+        .schedule-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
+        .schedule-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .count-num { font-size: clamp(2.5rem, 8vw, 4rem); }
+
+        #detail-modal {
+            display: none;
+            position: fixed; inset: 0; z-index: 20000;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(15px);
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        #detail-modal.active { display: flex; }
+
+        .map-frame { width: 100%; height: 100%; border: 0; }
+
+        .project-icon-placeholder {
+            width: 80px;
+            height: 80px;
+            background: #111;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 4px;
+            flex-shrink: 0;
+            transition: border-color 0.3s ease;
+        }
+        .project-card:hover .project-icon-placeholder { border-color: #fff; }
+
+        .project-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .project-card:hover {
+            background-color: #0c0c0c;
+            transform: translateY(-4px);
+            border-color: #444;
+        }
+        .project-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 追加：フッターの住所・装飾エリア */
+        .footer-info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            text-align: left;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 4rem;
+        }
+        @media (min-width: 768px) {
+            .footer-info-grid { grid-template-columns: 1.5fr 1fr 1fr; }
+        }
+        .address-accent {
+            border-left: 2px solid #fff;
+            padding-left: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-grid">
+
+    <div id="opening-loader">
+        <div class="text-center px-6">
+            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" alt="ロゴ" class="w-32 h-32 mx-auto mb-6">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-[0.6em] font-serif">城北祭</h2>
+        </div>
+    </div>
+
+    <header class="fixed top-0 w-full z-50 p-4 md:p-8 flex justify-between items-center bg-black/80 backdrop-blur-md border-b border-white/5">
+        <div class="flex items-center space-x-3">
+            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" alt="ロゴ" class="w-6 h-6 md:w-8 md:h-8 invert">
+            <div class="leading-none font-black tracking-widest text-sm md:text-lg uppercase">JOHOKU FES 2026</div>
+        </div>
+        <nav class="hidden md:flex space-x-8 text-[10px] font-black uppercase tracking-[0.2em]">
+            <a href="#schedule" class="hover:text-zinc-400 transition">スケジュール</a>
+            <a href="#groups" class="hover:text-zinc-400 transition">企画紹介</a>
+            <a href="#map" class="hover:text-zinc-400 transition">マップ</a>
+            <a href="#access" class="hover:text-zinc-400 transition">アクセス</a>
+        </nav>
+        <div class="md:hidden text-[10px] font-black tracking-widest text-zinc-500 uppercase">MENU</div>
+    </header>
+
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
+        <div class="reveal hero-container">
+            <div class="hero-bg-text">JOHOKU</div>
+            <p class="text-[9px] md:text-[10px] tracking-[0.6em] text-zinc-500 mb-8 uppercase italic font-black">第85回 城北祭 "男前"</p>
+            <h1 class="hero-text mb-4">男前</h1>
+            <div id="countdown" class="flex space-x-8 justify-center mt-8 mb-10">
+                <div class="text-center">
+                    <span id="days" class="count-num font-black block leading-none">00</span>
+                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">日</span>
+                </div>
+                <div class="text-center">
+                    <span id="hours" class="count-num font-black block leading-none">00</span>
+                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">時間</span>
+                </div>
+                <div class="text-center">
+                    <span id="minutes" class="count-num font-black block leading-none">00</span>
+                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">分</span>
+                </div>
+            </div>
+            <p class="text-xs md:text-sm font-bold tracking-[0.4em] text-zinc-400 uppercase italic">2026.09.26 - 09.27</p>
+        </div>
+    </section>
+
+    <section id="access" class="py-24 bg-black border-t border-zinc-900 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <div class="reveal">
+                    <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-4 italic">Location</h2>
+                    <h3 class="text-4xl md:text-6xl font-black mb-12 italic">ACCESS</h3>
+                    
+                    <div class="space-y-10">
+                        <div class="address-accent">
+                            <h4 class="text-white font-black text-xl md:text-2xl mb-2">城北中学校・高等学校</h4>
+                            <p class="text-zinc-500 text-sm tracking-widest font-bold">〒174-8631 東京都板橋区東新町2-28-1</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                            <div>
+                                <p class="text-[10px] font-black text-zinc-700 uppercase tracking-widest mb-3">By Train (01)</p>
+                                <p class="text-sm font-bold leading-relaxed">東武東上線「上板橋駅」<br>南口より 徒歩10分</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-zinc-700 uppercase tracking-widest mb-3">By Train (02)</p>
+                                <p class="text-sm font-bold leading-relaxed">東京メトロ「小竹向原駅」<br>1番出口より 徒歩20分</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="h-[450px] border border-zinc-900 reveal shadow-2xl relative">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3238.125197825547!2d139.6768213763567!3d35.756316372561955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018ed267dc89cd5%3A0xa626571908e11d59!2z5Z-O5YyX5Lit5a2m5qCh44O76auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1711012345678!5m2!1sja!2sjp" 
+                        class="w-full h-full grayscale invert contrast-125" 
+                        allowfullscreen="" 
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="footer-info-grid mt-24 reveal">
+                <div class="flex flex-col justify-between">
+                    <div class="mb-8">
+                        <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" alt="School Mark" class="w-14 h-14 opacity-40 invert grayscale">
+                    </div>
+                    <p class="text-[9px] font-black italic tracking-widest leading-loose text-zinc-600">
+                        JOHOKU JUNIOR & SENIOR HIGH SCHOOL<br>
+                        85th CULTURAL FESTIVAL "OTOKOMAE" 2026<br>
+                        © All rights reserved.
+                    </p>
+                </div>
+
+                <div class="bg-zinc-950 p-6 border border-zinc-900">
+                    <h5 class="text-[9px] font-black text-zinc-700 tracking-[0.3em] uppercase mb-6 italic">Console Login</h5>
+                    <div class="flex gap-2 mb-2">
+                        <input type="password" id="admin-password" placeholder="Passcode" 
+                               class="bg-black border border-zinc-800 text-[10px] px-4 py-2 w-full focus:outline-none focus:border-white font-bold tracking-widest text-white">
+                        <button onclick="checkAdminAccess()" class="bg-white text-black text-[9px] px-4 py-2 font-black uppercase tracking-widest hover:bg-zinc-300 transition">Login</button>
+                    </div>
+                    <p id="admin-error" class="text-[8px] text-red-800 font-black hidden uppercase mt-2">Invalid Access</p>
+                </div>
+
+                <div class="hidden md:flex flex-col justify-end items-end text-right">
+                    <p class="text-[8px] font-black tracking-[0.8em] text-zinc-800 uppercase italic leading-none mb-1">Authentic</p>
+                    <p class="text-[20px] font-black tracking-[-0.05em] text-zinc-900 uppercase italic leading-none">BE MANLY</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 bg-black border-t border-zinc-900/50">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center opacity-20">
+            <div class="h-[1px] bg-white flex-grow mr-10"></div>
+            <p class="text-[8px] font-black tracking-[1em] uppercase whitespace-nowrap italic">Johoku Fest 2026</p>
+            <div class="h-[1px] bg-white flex-grow ml-10"></div>
+        </div>
+    </footer>
+
+    </body>
+</html>
