@@ -7,38 +7,77 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', 'Noto Serif JP', serif; background-color: #000; color: #fff; scroll-behavior: smooth; }
-        .bg-grid { background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+        body { 
+            font-family: 'Inter', 'Noto Serif JP', serif; 
+            background-color: #000;
+            color: #fff; 
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
         
-        /* オープニング演出 */
-        #opening-loader { position: fixed; inset: 0; z-index: 10000; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1); }
-        .loader-content { opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
-        .loader-content.show { opacity: 1; transform: translateY(0); }
+        /* ローダー演出 */
+        #opening-loader {
+            position: fixed; inset: 0; z-index: 10000; background: #fff; color: #000;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+        }
         .loaded #opening-loader { transform: translateY(-100%); }
 
-        .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        .bg-grid { 
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-        /* タブ切り替え */
-        .tab-btn { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
-        .tab-btn.active { border-bottom: 2px solid #fff; color: #fff; }
+        .hero-text { 
+            font-family: 'Noto Serif JP', serif;
+            font-size: clamp(3.5rem, 15vw, 12rem); 
+            line-height: 1; 
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff 40%, #555 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 企画紹介：棟別タブ切り替え */
+        .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s; color: #444; }
+        .tab-btn.active { border-bottom-color: #fff; color: #fff; }
         .tab-content { display: none; }
         .tab-content.active { display: grid; }
 
         /* タイムテーブル */
-        .timetable-scroll { overflow-x: auto; background: #080808; border: 1px solid #1a1a1a; }
-        .timetable-container { display: grid; grid-template-columns: 80px repeat(3, 1fr); min-width: 800px; position: relative; }
-        .event-block { position: absolute; left: 5px; right: 5px; background: #111; border-left: 3px solid #fff; padding: 10px; font-size: 11px; z-index: 10; border-radius: 2px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .timetable-container {
+            display: grid;
+            grid-template-columns: 80px repeat(3, 1fr);
+            min-width: 800px;
+            background: #080808;
+            border: 1px solid #1a1a1a;
+        }
+        .event-block {
+            position: absolute; left: 4px; right: 4px;
+            background: #111; border-left: 3px solid #fff;
+            padding: 8px; font-size: 11px;
+            border-radius: 2px;
+        }
 
-        /* 投票ボタン */
-        .vote-btn { transition: all 0.3s; }
-        .vote-btn.voted { background: #333 !important; color: #777 !important; cursor: not-allowed; pointer-events: none; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        #detail-modal {
+            display: none; position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        #detail-modal.active { display: flex; }
+
+        /* 投票ボタンの状態 */
+        .voted-now { background: #333 !important; color: #666 !important; }
     </style>
 </head>
 <body class="bg-grid">
 
     <div id="opening-loader">
-        <div class="loader-content text-center" id="loader-content">
+        <div class="text-center">
             <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-24 h-24 mx-auto mb-6">
             <h2 class="text-4xl font-bold tracking-[0.5em] font-serif uppercase">城北祭</h2>
             <p class="mt-4 text-[10px] tracking-[0.8em] text-zinc-400 font-black">2026 OTOKOMAE</p>
@@ -48,98 +87,82 @@
     <header class="fixed top-0 w-full z-50 p-6 flex justify-between items-center bg-black/80 backdrop-blur-md border-b border-white/5">
         <div class="flex items-center space-x-3">
             <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-8 h-8 invert">
-            <span class="font-black tracking-tighter uppercase text-sm md:text-base">Johoku Fes 2026</span>
+            <div class="font-black tracking-widest text-sm uppercase">JOHOKU FES 2026</div>
         </div>
-        <nav class="hidden md:flex space-x-8 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+        <nav class="hidden md:flex space-x-8 text-[10px] font-black uppercase tracking-widest text-zinc-500">
             <a href="#schedule" class="hover:text-white transition">Schedule</a>
-            <a href="#projects" class="hover:text-white transition">Projects</a>
-            <a href="#access" class="hover:text-white transition">Map & Access</a>
+            <a href="#groups" class="hover:text-white transition">Projects</a>
+            <a href="#access" class="hover:text-white transition">Access</a>
         </nav>
     </header>
 
-    <section class="min-h-screen flex flex-col justify-center items-center text-center px-6">
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
         <div class="reveal">
-            <p class="text-[10px] tracking-[0.6em] text-zinc-500 mb-6 font-black uppercase italic">The 85th Cultural Festival</p>
-            <h1 class="text-[15vw] font-black font-serif tracking-tighter leading-none mb-4 bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent">男前</h1>
-            <p class="text-sm font-bold tracking-[0.4em] text-zinc-400 uppercase italic">2026.09.26 - 09.27</p>
+            <p class="text-[10px] tracking-[0.6em] text-zinc-500 mb-8 uppercase italic font-black">The 85th Cultural Festival</p>
+            <h1 class="hero-text mb-4">男前</h1>
+            <p class="text-sm font-bold tracking-[0.4em] text-zinc-400 uppercase italic mt-8">2026.09.26 - 09.27</p>
         </div>
     </section>
 
-    <section id="schedule" class="py-24 bg-black border-t border-zinc-900">
+    <section id="schedule" class="py-24 bg-black border-y border-zinc-900">
         <div class="max-w-5xl mx-auto px-6">
-            <h2 class="text-3xl font-black italic mb-12 reveal uppercase tracking-widest">Time Table</h2>
-            <div class="timetable-scroll reveal shadow-2xl">
-                <div class="timetable-container" style="height: 500px;">
+            <h2 class="text-3xl font-black italic mb-12 reveal uppercase tracking-widest">Schedule</h2>
+            <div class="overflow-x-auto reveal">
+                <div class="timetable-container" style="height: 500px; position: relative;">
                     <div class="border-r border-zinc-900 bg-zinc-950">
-                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-600 border-b border-zinc-900 font-black">TIME</div>
-                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-600">09:00</div>
-                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-600">10:00</div>
-                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-600">11:00</div>
-                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-600">12:00</div>
+                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-700 font-black border-b border-zinc-900 uppercase">Time</div>
+                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-500">09:00</div>
+                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-500">10:00</div>
+                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-500">11:00</div>
+                        <div class="h-20 flex items-center justify-center text-[10px] text-zinc-500">12:00</div>
                     </div>
                     <div class="relative border-r border-zinc-900">
-                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 uppercase italic">Auditorium</div>
-                        <div class="event-block" style="top: 100px; height: 140px;">吹奏楽部 演奏会<br><span class="text-[9px] text-zinc-400">10:00 - 11:30</span></div>
+                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 italic uppercase">Auditorium</div>
+                        <div class="event-block" style="top: 100px; height: 140px;">吹奏楽部 演奏会<br><span class="text-[9px] text-zinc-500 italic">10:00-11:30</span></div>
                     </div>
                     <div class="relative border-r border-zinc-900">
-                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 uppercase italic">Ground</div>
-                        <div class="event-block" style="top: 180px; height: 80px;">ミスター城北 予選<br><span class="text-[9px] text-zinc-400">11:00 - 12:00</span></div>
+                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 italic uppercase">Ground</div>
+                        <div class="event-block" style="top: 180px; height: 80px;">ミスター城北<br><span class="text-[9px] text-zinc-500 italic">11:00-12:00</span></div>
                     </div>
                     <div class="relative">
-                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 uppercase italic">Sub Hall</div>
+                        <div class="h-20 flex items-center justify-center text-xs font-black border-b border-zinc-900 italic uppercase">Sub Hall</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="projects" class="py-24 bg-black">
+    <section id="groups" class="py-24 bg-black">
         <div class="max-w-5xl mx-auto px-6">
             <div class="flex justify-between items-end mb-12 reveal">
                 <h2 class="text-3xl font-black italic uppercase tracking-widest">Projects</h2>
-                <p id="vote-status" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Remaining: 1 Vote</p>
+                <p id="global-vote-status" class="text-[10px] font-black text-zinc-500 uppercase italic">1 Vote Remaining</p>
             </div>
-            
-            <div class="flex space-x-8 mb-12 border-b border-zinc-900 reveal text-[11px] font-black text-zinc-600 uppercase tracking-[0.2em]">
-                <button onclick="showTab('jr')" id="btn-jr" class="tab-btn pb-4 active">中学棟 / Junior High</button>
-                <button onclick="showTab('sr')" id="btn-sr" class="tab-btn pb-4">高校棟 / Senior High</button>
-                <button onclick="showTab('common')" id="btn-common" class="tab-btn pb-4">共通棟 / Common Area</button>
+
+            <div class="flex space-x-8 mb-12 border-b border-zinc-900 reveal text-[11px] font-black uppercase tracking-widest">
+                <button onclick="showTab('jr')" id="btn-jr" class="tab-btn pb-4 active">中学棟 / Junior</button>
+                <button onclick="showTab('sr')" id="btn-sr" class="tab-btn pb-4">高校棟 / Senior</button>
+                <button onclick="showTab('common')" id="btn-common" class="tab-btn pb-4">共通棟 / Common</button>
             </div>
 
             <div id="tab-jr" class="tab-content active grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
-                <div class="p-6 bg-zinc-950 border border-zinc-900 rounded-sm flex justify-between items-center hover:border-white transition group">
-                    <div>
-                        <p class="text-[10px] text-zinc-500 mb-1 font-black italic tracking-widest">J-101</p>
-                        <p class="font-bold text-lg group-hover:text-white transition">物理部「ピタゴラ装置」</p>
-                    </div>
-                    <button onclick="vote(this, '物理部')" class="vote-btn px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-tighter hover:bg-zinc-300">Vote</button>
-                </div>
-                <div class="p-6 bg-zinc-950 border border-zinc-900 rounded-sm flex justify-between items-center hover:border-white transition group">
-                    <div>
-                        <p class="text-[10px] text-zinc-500 mb-1 font-black italic tracking-widest">J-203</p>
-                        <p class="font-bold text-lg group-hover:text-white transition">科学部「化学マジック」</p>
-                    </div>
-                    <button onclick="vote(this, '科学部')" class="vote-btn px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-tighter hover:bg-zinc-300">Vote</button>
+                <div class="p-6 bg-zinc-950 border border-zinc-900 hover:border-white transition cursor-pointer" onclick="openDetail('中学棟 1F', '物理部', 'dQw4w9WgXcQ', 'J-101', 'ピタゴラ装置の展示を行います。')">
+                    <p class="text-[10px] text-zinc-600 font-black mb-1 uppercase">J-101</p>
+                    <h5 class="text-lg font-black italic">物理部：ピタゴラ装置</h5>
                 </div>
             </div>
 
             <div id="tab-sr" class="tab-content grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
-                <div class="p-6 bg-zinc-950 border border-zinc-900 rounded-sm flex justify-between items-center hover:border-white transition group">
-                    <div>
-                        <p class="text-[10px] text-zinc-500 mb-1 font-black italic tracking-widest">S-205</p>
-                        <p class="font-bold text-lg group-hover:text-white transition">高校生徒会「カジノ」</p>
-                    </div>
-                    <button onclick="vote(this, 'カジノ')" class="vote-btn px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-tighter hover:bg-zinc-300">Vote</button>
+                <div class="p-6 bg-zinc-950 border border-zinc-900 hover:border-white transition cursor-pointer" onclick="openDetail('高校棟 2F', 'H1I', 'dQw4w9WgXcQ', 'S-205', '自作ジェットコースター。')">
+                    <p class="text-[10px] text-zinc-600 font-black mb-1 uppercase">S-205</p>
+                    <h5 class="text-lg font-black italic">H1I：ジェットコースター</h5>
                 </div>
             </div>
 
             <div id="tab-common" class="tab-content grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
-                <div class="p-6 bg-zinc-950 border border-zinc-900 rounded-sm flex justify-between items-center hover:border-white transition group">
-                    <div>
-                        <p class="text-[10px] text-zinc-500 mb-1 font-black italic tracking-widest">Commons 1F</p>
-                        <p class="font-bold text-lg group-hover:text-white transition">図書委員会「古本市」</p>
-                    </div>
-                    <button onclick="vote(this, '古本市')" class="vote-btn px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-tighter hover:bg-zinc-300">Vote</button>
+                <div class="p-6 bg-zinc-950 border border-zinc-900 hover:border-white transition cursor-pointer" onclick="openDetail('共通棟 図書館', '図書委員会', 'dQw4w9WgXcQ', 'Library', '古本市を開催。')">
+                    <p class="text-[10px] text-zinc-600 font-black mb-1 uppercase">Commons</p>
+                    <h5 class="text-lg font-black italic">図書委員会：古本市</h5>
                 </div>
             </div>
         </div>
@@ -148,79 +171,82 @@
     <section id="access" class="py-24 bg-black border-t border-zinc-900">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div class="reveal">
-                <h2 class="text-3xl font-black italic mb-12 uppercase tracking-widest">Location</h2>
+                <h2 class="text-3xl font-black italic mb-12 uppercase tracking-widest">Access</h2>
                 <div class="space-y-12">
                     <div class="border-l-4 border-white pl-8">
                         <h4 class="text-2xl font-black mb-2">城北中学校・高等学校</h4>
-                        <p class="text-zinc-500 text-sm font-bold tracking-widest">〒174-8631 東京都板橋区東新町2-28-1</p>
+                        <p class="text-zinc-500 text-sm font-bold">〒174-8631 東京都板橋区東新町2-28-1</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm font-bold">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm font-bold">
                         <div>
-                            <p class="text-[10px] text-zinc-600 font-black mb-4 uppercase tracking-[0.3em] italic">Train Route 01</p>
-                            <p class="leading-relaxed">東武東上線「上板橋駅」<br>南口より 徒歩10分</p>
+                            <p class="text-[10px] text-zinc-700 font-black mb-2 uppercase italic tracking-widest">Route 01</p>
+                            <p>東武東上線「上板橋駅」徒歩10分</p>
                         </div>
                         <div>
-                            <p class="text-[10px] text-zinc-600 font-black mb-4 uppercase tracking-[0.3em] italic">Train Route 02</p>
-                            <p class="leading-relaxed">東京メトロ「小竹向原駅」<br>1番出口より 徒歩20分</p>
+                            <p class="text-[10px] text-zinc-700 font-black mb-2 uppercase italic tracking-widest">Route 02</p>
+                            <p>東京メトロ「小竹向原駅」徒歩20分</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="h-[450px] border border-zinc-800 reveal overflow-hidden shadow-2xl relative">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3237.983944111394!2d139.6784841763567!3d35.75122112613009!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018ed267dc89cd5%3A0xa6b6a65208e11d59!2z5Z-O5YyX5Lit5a2m5qCh44O76auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1711000000000!5m2!1sja!2sjp" 
-                        class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+            <div class="h-[400px] border border-zinc-800 reveal shadow-2xl">
+                <iframe src="http://googleusercontent.com/maps.google.com/10" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
     <footer class="py-24 bg-zinc-950 border-t border-zinc-900">
         <div class="max-w-xl mx-auto px-6 text-center">
-            <div class="mb-16">
-                <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-12 h-12 invert opacity-20 mx-auto mb-6">
-                <p class="text-[9px] font-black tracking-[1em] text-zinc-700 uppercase italic">Johoku Fest 85th Edition</p>
+            <div class="mb-12">
+                <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-10 h-10 invert opacity-20 mx-auto mb-4">
+                <p class="text-[9px] font-black tracking-[1em] text-zinc-700 uppercase italic">Johoku Fest 85</p>
             </div>
-            <div class="bg-black p-10 border border-zinc-900 reveal">
-                <p class="text-[10px] font-black text-zinc-600 uppercase mb-6 tracking-widest italic">Encrypted Admin Login</p>
-                <div class="flex flex-col gap-3">
-                    <input type="password" id="admin-pass" placeholder="PASSCODE" class="bg-zinc-950 border border-zinc-800 text-[10px] px-5 py-4 w-full text-white focus:outline-none focus:border-white tracking-[0.5em] text-center">
-                    <button onclick="login()" class="bg-white text-black py-4 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-300 transition">Authorize Access</button>
+            <div class="bg-black p-8 border border-zinc-900 reveal">
+                <p class="text-[10px] font-black text-zinc-600 uppercase mb-6 tracking-widest italic">Admin Login</p>
+                <div class="flex flex-col gap-2">
+                    <input type="password" id="admin-pass" placeholder="PASSCODE" class="bg-zinc-950 border border-zinc-800 text-xs px-4 py-3 w-full text-white text-center focus:outline-none focus:border-white">
+                    <button onclick="checkAdminAccess()" class="bg-white text-black py-3 text-[10px] font-black uppercase hover:bg-zinc-300 transition">Login</button>
                 </div>
             </div>
         </div>
     </footer>
 
-    <div id="admin-panel" class="fixed inset-0 z-[10001] bg-black hidden flex-col p-10 overflow-y-auto bg-grid">
-        <div class="flex justify-between items-center mb-16 border-b border-zinc-900 pb-8">
-            <h2 class="text-3xl font-black italic tracking-tighter">CENTRAL COMMAND</h2>
-            <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="text-white text-[10px] font-black border border-white px-6 py-2 uppercase hover:bg-white hover:text-black transition">Terminate Session ×</button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="p-8 bg-zinc-950 border border-zinc-800">
-                <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-4">Total Votes</p>
-                <p class="text-6xl font-black italic">8,412</p>
-            </div>
-            <div class="p-8 bg-zinc-950 border border-zinc-800">
-                <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-4">Leading Project</p>
-                <p class="text-3xl font-black italic">吹奏楽部 (1,203)</p>
-            </div>
-            <div class="p-8 bg-zinc-950 border border-zinc-800">
-                <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-4">Uptime Status</p>
-                <p class="text-3xl font-black text-green-500 italic uppercase">Operational</p>
+    <div id="detail-modal" onclick="closeDetail()">
+        <div class="bg-black border border-zinc-800 w-full max-w-4xl p-8 relative overflow-y-auto max-h-[90vh]" onclick="event.stopPropagation()">
+            <button onclick="closeDetail()" class="absolute top-4 right-6 text-2xl font-light hover:text-zinc-500">×</button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-6">
+                <div class="aspect-video bg-zinc-900 border border-zinc-800">
+                    <iframe id="modal-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div>
+                    <p id="modal-location" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2"></p>
+                    <h4 id="modal-title" class="text-3xl font-black italic mb-6"></h4>
+                    <p id="modal-desc" class="text-sm text-zinc-400 leading-relaxed mb-8"></p>
+                    <button id="vote-btn-action" onclick="toggleVote()" class="w-full py-4 bg-white text-black font-black uppercase italic text-xs tracking-widest hover:bg-zinc-300 transition-all">
+                        この企画に投票する
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="admin-panel" class="fixed inset-0 z-[10001] bg-black hidden flex-col p-10 bg-grid">
+        <div class="flex justify-between items-center mb-16 border-b border-zinc-900 pb-8">
+            <h2 class="text-3xl font-black italic">VOTE ANALYTICS</h2>
+            <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="text-xs font-black border border-white px-6 py-2 uppercase">Close ×</button>
+        </div>
+        <div id="admin-results" class="space-y-4 max-w-3xl mx-auto w-full"></div>
+    </div>
+
     <script>
-        // --- ローダー & Reveal 制御 ---
+        let currentProject = "";
+
         window.addEventListener('load', () => {
-            const loaderContent = document.getElementById('loader-content');
-            setTimeout(() => loaderContent.classList.add('show'), 300);
             setTimeout(() => {
                 document.body.classList.add('loaded');
                 initReveal();
-                checkExistingVote(); // 以前の投票をチェック
-            }, 2000); 
+                updateGlobalVoteStatus();
+            }, 1000);
         });
 
         function initReveal() {
@@ -230,7 +256,7 @@
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
 
-        // --- 企画タブ切り替え ---
+        // タブ切り替え
         function showTab(type) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -238,46 +264,96 @@
             document.getElementById('btn-' + type).classList.add('active');
         }
 
-        // --- 投票ロジック (1人1票制限) ---
-        function vote(btn, name) {
-            if(localStorage.getItem('hasVoted')) {
-                alert("投票は1人1回までです。");
+        // モーダル
+        function openDetail(group, title, videoId, location, description) {
+            currentProject = title;
+            document.getElementById('modal-location').innerText = `${group} - ${location}`;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = description;
+            document.getElementById('modal-video').src = `http://googleusercontent.com/youtube.com/2{videoId}`;
+            document.getElementById('detail-modal').classList.add('active');
+            updateVoteButtonUI();
+        }
+
+        function closeDetail() {
+            document.getElementById('detail-modal').classList.remove('active');
+            document.getElementById('modal-video').src = "";
+        }
+
+        // 投票システム（1人1票制限）
+        function toggleVote() {
+            const voteData = JSON.parse(localStorage.getItem('johoku_votes')) || {};
+            const userVotedFor = localStorage.getItem('user_voted_for');
+
+            if (userVotedFor && userVotedFor !== currentProject) {
+                alert("投票は1人1回までです。他の企画に投票したい場合は、まず元の投票を取り消してください。");
                 return;
             }
-            if(confirm(name + " に投票しますか？\n(一度投票すると変更できません)")) {
-                localStorage.setItem('hasVoted', 'true');
-                localStorage.setItem('votedFor', name);
-                updateVoteButtons();
-                alert(name + " に投票しました！");
-            }
-        }
 
-        function checkExistingVote() {
-            if(localStorage.getItem('hasVoted')) {
-                updateVoteButtons();
-            }
-        }
-
-        function updateVoteButtons() {
-            const votedFor = localStorage.getItem('votedFor');
-            document.querySelectorAll('.vote-btn').forEach(btn => {
-                btn.classList.add('voted');
-                btn.innerHTML = "Closed";
-            });
-            document.getElementById('vote-status').innerHTML = `Voted for: ${votedFor}`;
-            document.getElementById('vote-status').classList.replace('text-zinc-500', 'text-white');
-        }
-
-        // --- 管理者ログイン ---
-        function login() {
-            const pass = document.getElementById('admin-pass').value;
-            // パスワードは「johoku2026」に設定
-            if(pass === "johoku2026") {
-                document.getElementById('admin-panel').classList.remove('hidden');
-                document.getElementById('admin-pass').value = "";
+            if (userVotedFor === currentProject) {
+                // 取り消し
+                voteData[currentProject] = Math.max(0, (voteData[currentProject] || 1) - 1);
+                localStorage.removeItem('user_voted_for');
             } else {
-                alert("ACCESS DENIED: INVALID PASSCODE");
+                // 新規投票
+                voteData[currentProject] = (voteData[currentProject] || 0) + 1;
+                localStorage.setItem('user_voted_for', currentProject);
             }
+
+            localStorage.setItem('johoku_votes', JSON.stringify(voteData));
+            updateVoteButtonUI();
+            updateGlobalVoteStatus();
+        }
+
+        function updateVoteButtonUI() {
+            const btn = document.getElementById('vote-btn-action');
+            const userVotedFor = localStorage.getItem('user_voted_for');
+
+            if (userVotedFor === currentProject) {
+                btn.innerText = "投票を取り消す";
+                btn.classList.add('voted-now');
+            } else {
+                btn.innerText = "この企画に投票する";
+                btn.classList.remove('voted-now');
+            }
+        }
+
+        function updateGlobalVoteStatus() {
+            const userVotedFor = localStorage.getItem('user_voted_for');
+            const status = document.getElementById('global-vote-status');
+            if (userVotedFor) {
+                status.innerText = `Voted for: ${userVotedFor}`;
+                status.classList.replace('text-zinc-500', 'text-white');
+            } else {
+                status.innerText = "1 Vote Remaining";
+                status.classList.replace('text-white', 'text-zinc-500');
+            }
+        }
+
+        // 管理者ログイン
+        function checkAdminAccess() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'johoku') { // 管理者パスワード
+                document.getElementById('admin-panel').classList.remove('hidden');
+                renderResults();
+            } else {
+                alert("Invalid Passcode");
+            }
+        }
+
+        function renderResults() {
+            const container = document.getElementById('admin-results');
+            container.innerHTML = "";
+            const votes = JSON.parse(localStorage.getItem('johoku_votes')) || {};
+            const sorted = Object.entries(votes).sort((a,b) => b[1] - a[1]);
+
+            sorted.forEach(([name, count]) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-zinc-950 p-4 border border-zinc-900";
+                div.innerHTML = `<span class="font-black italic">${name}</span><span class="font-black text-xl">${count} Votes</span>`;
+                container.appendChild(div);
+            });
+            if(sorted.length === 0) container.innerHTML = "<p class='text-center text-zinc-500'>No votes recorded yet.</p>";
         }
     </script>
 </body>
