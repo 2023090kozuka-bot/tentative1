@@ -9,13 +9,11 @@
     <style>
         body { 
             font-family: 'Inter', 'Noto Serif JP', serif; 
-            background-color: #000;
-            color: #fff; 
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
+            background-color: #000; color: #fff; 
+            scroll-behavior: smooth; overflow-x: hidden;
         }
         
+        /* オープニング */
         #opening-loader {
             position: fixed; inset: 0; z-index: 10000; background: #fff; color: #000;
             display: flex; align-items: center; justify-content: center;
@@ -29,388 +27,196 @@
             background-size: 40px 40px;
         }
 
-        /* ハンバーガーメニュー */
-        #mobile-menu {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            backdrop-filter: blur(20px);
+        /* サイドメニュー */
+        #side-menu {
+            position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px);
+            z-index: 9000; transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding: 80px 40px;
         }
-        #mobile-menu.active { display: flex; }
-        .menu-link { font-size: 2rem; font-weight: 900; font-style: italic; margin: 1rem 0; letter-spacing: -0.05em; transition: 0.3s; }
-        .menu-link:hover { opacity: 0.5; transform: skewX(-10deg); }
+        #side-menu.active { right: 0; }
+        .menu-link { display: block; font-size: 1.25rem; font-weight: 900; margin-bottom: 2rem; border-bottom: 1px solid transparent; }
+        .menu-link:hover { border-bottom-color: #fff; }
 
-        .hero-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
+        /* ヒーローセクション */
+        .hero-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         .hero-bg-text {
-            position: absolute;
-            font-size: clamp(8rem, 25vw, 24rem);
-            font-weight: 900;
-            color: rgba(255,255,255,0.03);
-            z-index: 0;
-            line-height: 1;
-            letter-spacing: -0.05em;
-            pointer-events: none;
-            user-select: none;
+            position: absolute; font-size: clamp(8rem, 25vw, 24rem); font-weight: 900;
+            color: rgba(255,255,255,0.03); z-index: 0; line-height: 1; letter-spacing: -0.05em;
+            pointer-events: none; user-select: none;
         }
-
         .hero-text { 
-            position: relative;
-            z-index: 1;
-            font-family: 'Noto Serif JP', serif;
-            font-size: clamp(3.5rem, 15vw, 12rem); 
-            line-height: 1; 
-            font-weight: 900;
+            position: relative; z-index: 1; font-family: 'Noto Serif JP', serif;
+            font-size: clamp(3.5rem, 15vw, 12rem); font-weight: 900;
             background: linear-gradient(to bottom, #fff 40%, #555 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            letter-spacing: -0.05em;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .search-input {
-            background: transparent;
-            border-bottom: 2px solid #222;
-            transition: all 0.4s ease;
-            outline: none;
-            text-align: center;
-            border-radius: 0;
-        }
-        .search-input:focus { border-bottom-color: #fff; }
-
-        .building-header {
-            background: #0a0a0a;
-            border-bottom: 1px solid #1a1a1a;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .building-header:hover { background: #111; }
-        .building-content {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* アコーディオン・スケジュール共通 */
+        .building-header { background: #0a0a0a; border-bottom: 1px solid #1a1a1a; cursor: pointer; }
+        .building-content { overflow: hidden; max-height: 0; transition: max-height 0.6s ease; }
         .building-section.is-open .building-content { max-height: 4000px; }
-        .icon-plus { transition: transform 0.4s ease; display: inline-block; }
+        .icon-plus { transition: transform 0.4s; }
         .building-section.is-open .icon-plus { transform: rotate(45deg); }
 
-        .timetable-container {
-            display: grid;
-            grid-template-columns: 60px repeat(5, 1fr);
-            gap: 1px;
-            background: #1a1a1a;
-            border: 1px solid #1a1a1a;
-            min-width: 900px;
-        }
-        .timetable-header { background: #0a0a0a; padding: 1.5rem 0.5rem; text-align: center; position: sticky; top: 0; z-index: 10; }
-        .time-label { background: #080808; padding: 0.5rem; text-align: center; font-size: 10px; font-weight: 900; color: #444; height: 100px; display: flex; align-items: flex-start; justify-content: center; }
+        .timetable-container { display: grid; grid-template-columns: 60px repeat(5, 1fr); gap: 1px; background: #1a1a1a; min-width: 900px; }
+        .time-label { height: 100px; background: #080808; display: flex; justify-content: center; font-size: 10px; color: #444; }
         .venue-column { background: #000; position: relative; height: 700px; }
-        .event-block {
-            position: absolute; left: 4px; right: 4px; background: #111; border-left: 3px solid #fff;
-            padding: 0.5rem; font-size: 11px; overflow: hidden; transition: all 0.3s ease; border-top: 1px solid #222;
-        }
-        .event-block:hover { background: #1a1a1a; z-index: 5; }
+        .event-block { position: absolute; left: 4px; right: 4px; background: #111; border-left: 3px solid #fff; padding: 5px; font-size: 11px; }
 
-        .schedule-tab-btn { position: relative; padding-bottom: 0.5rem; transition: color 0.3s ease; }
-        .schedule-tab-btn.active { color: #fff; }
-        .schedule-tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #fff; }
-        .schedule-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
-        .schedule-content.active { display: block; opacity: 1; transform: translateY(0); }
-
+        /* モーダル */
+        #detail-modal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); align-items: center; justify-content: center; }
+        #detail-modal.active { display: flex; }
+        
         .reveal { opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-
-        .count-num { font-size: clamp(2.5rem, 8vw, 4rem); }
-
-        #detail-modal {
-            display: none; position: fixed; inset: 0; z-index: 1000;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
-            align-items: center; justify-content: center; padding: 20px;
-        }
-        #detail-modal.active { display: flex; }
-
-        .project-icon-placeholder {
-            width: 80px; height: 80px; background: #111; border: 1px solid #333;
-            display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; flex-shrink: 0;
-        }
-        .project-card { cursor: pointer; transition: all 0.3s ease; }
-        .project-card:hover { background-color: #0c0c0c; transform: translateY(-4px); border-color: #444; }
     </style>
 </head>
 <body class="bg-grid">
 
     <div id="opening-loader">
-        <div class="text-center px-6">
-            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" alt="ロゴ" class="w-24 h-24 mx-auto mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold tracking-[0.6em] font-serif">城北祭 2026</h2>
+        <div class="text-center">
+            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-24 mx-auto mb-4">
+            <h2 class="text-2xl font-serif font-black tracking-widest">城北祭 2026</h2>
         </div>
     </div>
 
-    <div id="mobile-menu">
-        <button onclick="toggleMenu()" class="absolute top-8 right-8 text-4xl">×</button>
-        <a href="#schedule" class="menu-link" onclick="toggleMenu()">SCHEDULE</a>
-        <a href="#groups" class="menu-link" onclick="toggleMenu()">PROJECTS</a>
-        <a href="#access" class="menu-link" onclick="toggleMenu()">ACCESS</a>
-        <div class="h-px w-20 bg-white/20 my-8"></div>
-        <a href="https://www.johoku.ac.jp/" target="_blank" class="text-sm font-bold tracking-widest hover:opacity-50 transition">OFFICIAL WEBSITE</a>
-        <a href="https://www.youtube.com/@johoku_fes" target="_blank" class="text-sm font-bold tracking-widest mt-4 hover:opacity-50 transition">OFFICIAL YOUTUBE</a>
+    <div id="side-menu">
+        <button onclick="toggleMenu()" class="absolute top-6 right-6 text-2xl">×</button>
+        <a href="#schedule" class="menu-link" onclick="toggleMenu()">スケジュール</a>
+        <a href="#groups" class="menu-link" onclick="toggleMenu()">企画紹介</a>
+        <a href="#access" class="menu-link" onclick="toggleMenu()">アクセス</a>
+        <div class="mt-20 space-y-4">
+            <a href="https://www.johoku.ac.jp/" target="_blank" class="block text-xs font-bold text-zinc-500 hover:text-white transition">城北学園 公式サイト</a>
+            <a href="https://www.youtube.com/@JohokuFes" target="_blank" class="block text-xs font-bold text-zinc-500 hover:text-white transition">城北文化祭 YouTube</a>
+        </div>
     </div>
 
     <header class="fixed top-0 w-full z-[8000] p-4 md:p-6 flex justify-between items-center bg-black/80 backdrop-blur-md border-b border-white/5">
         <div class="flex items-center space-x-3">
-            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" alt="ロゴ" class="w-6 h-6 md:w-8 md:h-8 invert">
-            <div class="leading-none font-black tracking-widest text-xs md:text-sm uppercase">JOHOKU FES 2026</div>
+            <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-8 h-8 invert">
+            <div class="font-black text-sm uppercase tracking-tighter">JOHOKU FES 2026</div>
         </div>
-        
-        <div class="flex items-center space-x-6">
-            <nav class="hidden lg:flex space-x-8 text-[10px] font-black uppercase tracking-[0.2em]">
-                <a href="#schedule" class="hover:text-zinc-400 transition">スケジュール</a>
-                <a href="#groups" class="hover:text-zinc-400 transition">企画紹介</a>
-                <a href="#access" class="hover:text-zinc-400 transition">アクセス</a>
-            </nav>
-            <button onclick="toggleMenu()" class="flex flex-col space-y-1.5 group p-2">
-                <div class="w-6 h-0.5 bg-white transition-all"></div>
-                <div class="w-6 h-0.5 bg-white transition-all"></div>
-                <div class="w-6 h-0.5 bg-white transition-all"></div>
-            </button>
-        </div>
+        <button onclick="toggleMenu()" class="space-y-1.5 p-2">
+            <div class="w-6 h-0.5 bg-white"></div>
+            <div class="w-6 h-0.5 bg-white"></div>
+            <div class="w-6 h-0.5 bg-white"></div>
+        </button>
     </header>
 
-    <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
-        <div class="reveal hero-container">
-            <div class="hero-bg-text">JOHOKU</div>
-            <p class="text-[10px] tracking-[0.6em] text-zinc-500 mb-8 uppercase italic font-black">The 85th Edition "Otokomae"</p>
+    <section class="hero-container">
+        <div class="hero-bg-text">JOHOKU</div>
+        <div class="reveal text-center z-10">
+            <p class="text-[10px] tracking-[0.6em] text-zinc-500 mb-4 font-black italic">THE 85TH EDITION</p>
             <h1 class="hero-text mb-4">男前</h1>
-            <div id="countdown" class="flex space-x-8 justify-center mt-8 mb-10">
-                <div class="text-center">
-                    <span id="days" class="count-num font-black block leading-none">00</span>
-                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">Days</span>
-                </div>
-                <div class="text-center">
-                    <span id="hours" class="count-num font-black block leading-none">00</span>
-                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">Hours</span>
-                </div>
-                <div class="text-center">
-                    <span id="minutes" class="count-num font-black block leading-none">00</span>
-                    <span class="text-[8px] text-zinc-600 font-bold tracking-widest block mt-2 uppercase">Mins</span>
-                </div>
+            <div id="countdown" class="flex space-x-6 justify-center mb-6">
+                <div class="text-center"><span id="days" class="text-4xl font-black block">00</span><span class="text-[8px] text-zinc-500 uppercase">Days</span></div>
+                <div class="text-center"><span id="hours" class="text-4xl font-black block">00</span><span class="text-[8px] text-zinc-500 uppercase">Hours</span></div>
+                <div class="text-center"><span id="minutes" class="text-4xl font-black block">00</span><span class="text-[8px] text-zinc-500 uppercase">Mins</span></div>
             </div>
-            <p class="text-xs md:text-sm font-bold tracking-[0.4em] text-zinc-400 uppercase italic">2026.09.26 - 09.27</p>
+            <p class="text-sm font-bold tracking-[0.3em] text-zinc-400">2026.09.26 - 09.27</p>
         </div>
     </section>
 
-    <section id="schedule" class="py-20 md:py-32 px-4 md:px-8 bg-black border-y border-zinc-900">
-        <div class="max-w-[1400px] mx-auto">
-            <div class="reveal text-center mb-16">
-                <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-2 italic">Timeline</h2>
-                <h3 class="text-3xl md:text-5xl font-black mb-10">スケジュール</h3>
-                
-                <div class="flex justify-center space-x-12 text-zinc-600 font-black italic tracking-widest mb-12">
-                    <button class="schedule-tab-btn active uppercase text-sm" onclick="switchTab('day1')">Day 01 <span class="text-[10px] block not-italic opacity-50">09.26 土</span></button>
-                    <button class="schedule-tab-btn uppercase text-sm" onclick="switchTab('day2')">Day 02 <span class="text-[10px] block not-italic opacity-50">09.27 日</span></button>
-                </div>
-            </div>
-            
-            <div id="schedule-day1" class="schedule-content active overflow-x-auto">
+    <section id="schedule" class="py-20 bg-black border-y border-zinc-900">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="text-3xl font-black mb-10 text-center">スケジュール</h3>
+            <div id="schedule-day1" class="overflow-x-auto">
                 <div class="timetable-container">
-                    <div class="timetable-header text-[8px] font-black text-zinc-700 flex items-end justify-center uppercase">時間</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">講堂</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">多目的ホール</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">中庭</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">グラウンド</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">高校視聴覚</div>
-
-                    <div class="flex flex-col">
-                        <div class="time-label">09:00</div><div class="time-label">10:00</div><div class="time-label">11:00</div><div class="time-label">12:00</div><div class="time-label">13:00</div><div class="time-label">14:00</div><div class="time-label">15:00</div>
-                    </div>
+                    <div class="bg-zinc-900"></div><div class="p-2 text-center text-xs font-black">講堂</div><div class="p-2 text-center text-xs font-black">中庭</div><div class="p-2 text-center text-xs font-black">多目的</div><div class="p-2 text-center text-xs font-black">グラウンド</div><div class="p-2 text-center text-xs font-black">視聴覚</div>
+                    <div class="time-label">09:00</div>
                     <div class="venue-column">
-                        <div class="event-block" style="top: 25px; height: 150px;"><span class="text-[8px] font-bold text-zinc-500 block">09:15 - 10:45</span><p class="font-black leading-tight">城北の愉快なソリストたち</p></div>
-                        <div class="event-block" style="top: 191px; height: 75px;"><span class="text-[8px] font-bold text-zinc-500 block">10:55 - 11:40</span><p class="font-black leading-tight">ダンス部</p></div>
+                        <div class="event-block" style="top: 25px; height: 100px;">城北のソリストたち</div>
                     </div>
-                    <div class="venue-column"><div class="event-block" style="top: 100px; height: 600px;"><span class="text-[8px] font-bold text-zinc-500 block">10:00 - 16:00</span><p class="font-black leading-tight">軽音楽部 LIVE</p></div></div>
-                    <div class="venue-column"></div><div class="venue-column"></div><div class="venue-column"></div>
-                </div>
-            </div>
-
-            <div id="schedule-day2" class="schedule-content overflow-x-auto">
-                <div class="timetable-container">
-                    <div class="timetable-header text-[8px] font-black text-zinc-700 flex items-end justify-center uppercase">時間</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">講堂</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">多目的ホール</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">中庭</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">グラウンド</div>
-                    <div class="timetable-header text-[10px] font-black italic tracking-widest">高校視聴覚</div>
-
-                    <div class="flex flex-col">
-                        <div class="time-label">09:00</div><div class="time-label">10:00</div><div class="time-label">11:00</div><div class="time-label">12:00</div><div class="time-label">13:00</div><div class="time-label">14:00</div><div class="time-label">15:00</div>
                     </div>
-                    <div class="venue-column">
-                         <div class="event-block" style="top: 100px; height: 200px; border-left-color: #ff3e3e;"><span class="text-[8px] font-bold text-zinc-500 block">10:00 - 12:00</span><p class="font-black leading-tight">Day 2 特別企画</p></div>
-                    </div>
-                    <div class="venue-column"></div><div class="venue-column"></div><div class="venue-column"></div><div class="venue-column"></div>
-                </div>
             </div>
         </div>
     </section>
 
-    <section id="groups" class="py-20 md:py-32 bg-black">
-        <div class="px-6 md:px-24 mb-16 text-center">
-            <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-2 italic">Project Search</h2>
-            <h3 class="text-3xl md:text-5xl font-black mb-8">企画紹介</h3>
-            <div class="w-full max-w-md mx-auto">
-                <input type="text" id="project-search" placeholder="企画名や団体名を検索..." 
-                       class="search-input w-full py-4 text-xl font-bold placeholder:text-zinc-800"
-                       onkeyup="filterProjects()">
-            </div>
-        </div>
-
-        <div class="accordion-container">
+    <section id="groups" class="py-20 bg-black">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="text-3xl font-black mb-8 text-center">企画紹介</h3>
             <div class="building-section is-open" id="section-junior">
-                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('junior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">01. 中学棟</h4>
-                    <span class="icon-plus text-2xl font-light">+</span>
+                <div class="building-header p-6 flex justify-between" onclick="toggleBuilding('junior')">
+                    <span class="font-black italic">01. 中学棟</span><span class="icon-plus">+</span>
                 </div>
-                <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" 
-                             data-name="中学科学部"
-                             onclick="openDetail('中学科学部', '実験デモンストレーション', 'dQw4w9WgXcQ', '中学棟 1F', '不思議な化学反応を目の前で体験しよう。')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow">
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">中学科学部</p>
-                                    <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[中学棟 1F]</p>
-                                </div>
-                                <div class="project-icon-placeholder">
-                                    <span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span>
-                                </div>
-                            </div>
-                            <h5 class="text-lg font-black italic">実験デモンストレーション</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="building-section" id="section-common">
-                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('common')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">02. 共通棟</h4>
-                    <span class="icon-plus text-2xl font-light">+</span>
-                </div>
-                <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" 
-                             data-name="図書委員会"
-                             onclick="openDetail('図書委員会', '古本市 & 文芸展示', 'dQw4w9WgXcQ', '共通棟 2F 図書館', '毎年恒例の古本市。掘り出し物が見つかるかも？')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow">
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">図書委員会</p>
-                                    <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[図書館]</p>
-                                </div>
-                                <div class="project-icon-placeholder">
-                                    <span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span>
-                                </div>
-                            </div>
-                            <h5 class="text-lg font-black italic">古本市 & 文芸展示</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="building-section" id="section-senior">
-                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">03. 高校棟</h4>
-                    <span class="icon-plus text-2xl font-light">+</span>
-                </div>
-                <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" 
-                             data-name="H1I"
-                             onclick="openDetail('H1I', 'ジェットコースター', 'dQw4w9WgXcQ', 'H1I教室', 'はらはらどきどき丈夫なジェットコースター')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow">
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">H1I</p>
-                                    <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[H1I教室]</p>
-                                </div>
-                                <div class="project-icon-placeholder">
-                                    <span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span>
-                                </div>
-                            </div>
-                            <h5 class="text-lg font-black italic">ジェットコースター</h5>
-                        </div>
+                <div class="building-content p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-zinc-950 p-6 border border-zinc-900" onclick="openDetail('中学科学部', '実験展示', 'dQw4w9WgXcQ', '中学棟 1F', '科学の不思議を体験。')">
+                        <p class="text-[10px] text-zinc-500">中学科学部</p>
+                        <h5 class="font-black italic">実験デモンストレーション</h5>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="access" class="py-20 md:py-32 bg-black border-t border-zinc-900">
-        <div class="px-6 md:px-24">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-2 italic">Location</h2>
-                    <h3 class="text-3xl md:text-5xl font-black mb-8">アクセス</h3>
-                    <div class="space-y-6 text-zinc-400">
-                        <p class="font-bold text-white text-xl">城北中学校・高等学校</p>
-                        <p class="text-sm">〒174-8631 東京都板橋区東新町2-28-1</p>
-                        <div class="pt-4 space-y-4">
-                            <div>
-                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-2">Tobu Tojo Line</p>
-                                <p class="text-sm">「上板橋駅」南口より 徒歩10分</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-2">Tokyo Metro</p>
-                                <p class="text-sm">「小竹向原駅」1番出口より 徒歩20分</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="h-[450px] border border-zinc-800 bg-zinc-900 overflow-hidden relative">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3238.1643447141527!2d139.67873137635678!3d35.75908062568605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018ed933215904f%3A0xc39546059d4c2813!2z5Z-O5YyX5Lit5a2m5qCh44O76auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1711000000000!5m2!1sja!2sjp" 
-                        class="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-700" 
-                        allowfullscreen="" 
-                        loading="lazy">
-                    </iframe>
-                </div>
+    <section id="access" class="py-20 bg-black border-t border-zinc-900">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+                <h3 class="text-3xl font-black mb-6">アクセス</h3>
+                <p class="text-zinc-400 mb-4">〒174-8631 東京都板橋区東新町2-28-1<br>城北中学校・高等学校</p>
+                <p class="text-sm text-zinc-500 leading-relaxed">● 東武東上線「上板橋駅」徒歩10分<br>● 東京メトロ「小竹向原駅」徒歩20分</p>
+            </div>
+            <div class="h-[400px] border border-zinc-800">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3238.164805721867!2d139.67499647635293!3d35.75905142566861!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018ed936c576569%3A0x67394850774a3875!2z5Z-O5YyX5Lit5a2m5qCh44O76auY562J5a2m5qCh!5e0!3m2!1sja!2sjp!4v1711200000000!5m2!1sja!2sjp" 
+                class="w-full h-full border-0 grayscale" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
 
-    <div id="detail-modal" onclick="closeDetail()">
-        <div class="bg-black border border-zinc-800 w-full max-w-5xl p-6 md:p-8 relative overflow-y-auto max-h-[90vh]" onclick="event.stopPropagation()">
-            <button onclick="closeDetail()" class="absolute top-4 right-6 text-3xl font-light">×</button>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mt-4">
-                <div class="aspect-video bg-zinc-900 border border-zinc-800"><iframe id="modal-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe></div>
-                <div>
-                    <p id="modal-group" class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1"></p>
-                    <p id="modal-location" class="text-sm font-black text-white bg-zinc-900 inline-block px-2 py-1 border border-zinc-700 mb-4"></p>
-                    <h4 id="modal-title" class="text-3xl font-black italic mb-6"></h4>
-                    <p id="modal-desc" class="text-sm text-zinc-400 leading-relaxed mb-8"></p>
-                    <button id="vote-btn" onclick="toggleVote()" class="w-full py-4 bg-white text-black font-black italic uppercase tracking-widest hover:bg-zinc-200 transition">投票する</button>
-                </div>
+    <div id="admin-panel" class="fixed inset-0 z-[11000] bg-white text-black p-8 hidden overflow-y-auto">
+        <div class="max-w-2xl mx-auto">
+            <div class="flex justify-between items-end mb-8 border-b-4 border-black pb-4">
+                <h2 class="text-4xl font-black italic">VOTE RESULTS</h2>
+                <button onclick="document.getElementById('admin-panel').classList.add('hidden')" class="font-bold">CLOSE</button>
             </div>
+            <div id="admin-results" class="space-y-4"></div>
         </div>
     </div>
 
     <footer class="py-20 text-center bg-black border-t border-zinc-900">
-        <img src="https://d.kuku.lu/bfdyuv4hn" alt="ロゴ" class="w-10 h-10 mx-auto mb-8 opacity-30 invert">
-        <p class="text-[8px] font-black text-zinc-700 tracking-[0.4em] uppercase italic">THE 85TH JOHOKU FESTIVAL 2026</p>
+        <img src="https://cdn.phototourl.com/uploads/2026-03-21-f66a94c4-fd93-487d-a3bb-5c7180f15da9.png" class="w-8 mx-auto mb-10 opacity-20 invert">
+        <div class="max-w-xs mx-auto mb-10">
+            <p class="text-[10px] font-black text-zinc-700 tracking-widest uppercase mb-4">管理者ログイン (Johoku)</p>
+            <div class="flex gap-2">
+                <input type="password" id="admin-pass" placeholder="PASSWORD" class="bg-zinc-950 border border-zinc-800 text-[10px] px-3 py-2 w-full text-white">
+                <button onclick="checkAdmin()" class="bg-zinc-800 text-white text-[10px] px-4 py-2 font-black">ENTER</button>
+            </div>
+        </div>
+        <p class="text-[8px] text-zinc-700 font-black tracking-widest uppercase italic">© THE 85TH JOHOKU FESTIVAL 2026</p>
     </footer>
+
+    <div id="detail-modal" onclick="closeDetail()">
+        <div class="bg-black border border-zinc-800 w-full max-w-4xl p-8 relative" onclick="event.stopPropagation()">
+            <button onclick="closeDetail()" class="absolute top-4 right-6 text-3xl">×</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="aspect-video bg-zinc-900"><iframe id="modal-video" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe></div>
+                <div>
+                    <h4 id="modal-title" class="text-3xl font-black italic mb-4"></h4>
+                    <p id="modal-location" class="text-xs text-zinc-500 mb-4 font-bold"></p>
+                    <p id="modal-desc" class="text-sm text-zinc-400 leading-relaxed mb-8"></p>
+                    <button id="vote-btn" onclick="toggleVote()" class="w-full py-4 bg-white text-black font-black italic">この企画に投票する</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const TARGET_DATE = new Date("September 26, 2026 09:00:00").getTime();
         let currentProject = "";
 
-        // メニュー開閉
-        function toggleMenu() {
-            document.getElementById('mobile-menu').classList.toggle('active');
-        }
+        // サイドメニュー開閉
+        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
+        // ローダー & 監視
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-                startCountdown();
-            }, 1000);
+            setTimeout(() => { document.body.classList.add('loaded'); startCountdown(); }, 1000);
+            const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }), {threshold: 0.1});
+            document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
         });
 
+        // カウントダウン
         function startCountdown() {
             setInterval(() => {
                 const diff = TARGET_DATE - new Date().getTime();
@@ -421,37 +227,59 @@
             }, 1000);
         }
 
-        function switchTab(day) {
-            document.querySelectorAll('.schedule-tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.querySelectorAll('.schedule-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('schedule-' + day).classList.add('active');
-        }
+        function toggleBuilding(id) { document.getElementById('section-'+id).classList.toggle('is-open'); }
 
-        function toggleBuilding(id) {
-            document.getElementById('section-' + id).classList.toggle('is-open');
-        }
-
-        function openDetail(group, title, videoId, location, description) {
+        function openDetail(group, title, vid, loc, desc) {
             currentProject = title;
-            document.getElementById('modal-group').innerText = group;
-            document.getElementById('modal-location').innerText = location;
             document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = description;
-            document.getElementById('modal-video').src = `https://www.youtube.com/embed/${videoId}`;
+            document.getElementById('modal-location').innerText = loc;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-video').src = `https://www.youtube.com/embed/${vid}`;
             document.getElementById('detail-modal').classList.add('active');
+            updateVoteBtnUI();
+        }
+        function closeDetail() { document.getElementById('detail-modal').classList.remove('active'); document.getElementById('modal-video').src = ""; }
+
+        // 投票システム (LocalStorage)
+        function toggleVote() {
+            let votes = JSON.parse(localStorage.getItem('j_votes')) || {};
+            const key = 'voted_' + currentProject;
+            if(localStorage.getItem(key)) {
+                votes[currentProject] = Math.max(0, (votes[currentProject] || 1) - 1);
+                localStorage.removeItem(key);
+            } else {
+                votes[currentProject] = (votes[currentProject] || 0) + 1;
+                localStorage.setItem(key, "true");
+            }
+            localStorage.setItem('j_votes', JSON.stringify(votes));
+            updateVoteBtnUI();
+        }
+        function updateVoteBtnUI() {
+            const btn = document.getElementById('vote-btn');
+            if(localStorage.getItem('voted_' + currentProject)) {
+                btn.innerText = "投票を取り消す"; btn.classList.replace('bg-white', 'bg-zinc-800'); btn.classList.replace('text-black', 'text-white');
+            } else {
+                btn.innerText = "この企画に投票する"; btn.classList.replace('bg-zinc-800', 'bg-white'); btn.classList.replace('text-white', 'text-black');
+            }
         }
 
-        function closeDetail() {
-            document.getElementById('detail-modal').classList.remove('active');
-            document.getElementById('modal-video').src = "";
+        // 管理者ログイン
+        function checkAdmin() {
+            const p = document.getElementById('admin-pass').value;
+            if(p === 'Johoku') {
+                document.getElementById('admin-panel').classList.remove('hidden');
+                renderResults();
+            } else { alert('パスワードが違います'); }
         }
-
-        function filterProjects() {
-            const query = document.getElementById('project-search').value.toLowerCase();
-            document.querySelectorAll('.project-card').forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                card.style.display = name.includes(query) ? 'block' : 'none';
+        function renderResults() {
+            const res = document.getElementById('admin-results');
+            res.innerHTML = "";
+            const votes = JSON.parse(localStorage.getItem('j_votes')) || {};
+            Object.entries(votes).sort((a,b)=>b[1]-a[1]).forEach(([name, count]) => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between border-b p-2 font-bold";
+                row.innerHTML = `<span>${name}</span><span>${count} 票</span>`;
+                res.appendChild(row);
             });
         }
     </script>
