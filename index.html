@@ -58,7 +58,7 @@
         .building-header { background: #0a0a0a; border-bottom: 1px solid #1a1a1a; cursor: pointer; transition: background 0.3s; }
         .building-header:hover { background: #111; }
         .building-content { overflow: hidden; max-height: 0; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .building-section.is-open .building-content { max-height: 9999px; }
+        .building-section.is-open .building-content { max-height: 50000px; }
         .icon-plus { transition: transform 0.4s ease; display: inline-block; }
         .building-section.is-open .icon-plus { transform: rotate(45deg); }
 
@@ -181,14 +181,14 @@
             <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-2 italic">Project Search</h2>
             <h3 class="text-3xl md:text-5xl font-black mb-8">企画紹介</h3>
             <div class="w-full max-w-md mx-auto">
-                <input type="text" id="project-search" placeholder="クラス名（M1A、H2Iなど）や企画名を検索..." class="search-input w-full py-4 text-xl font-bold placeholder:text-zinc-800" onkeyup="filterProjects()">
+                <input type="text" id="project-search" placeholder="クラス名や企画名、部活名で検索..." class="search-input w-full py-4 text-xl font-bold placeholder:text-zinc-800" onkeyup="filterProjects()">
             </div>
         </div>
 
         <div class="accordion-container">
             <div class="building-section is-open" id="section-junior">
                 <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('junior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">01. 中学棟 (M1A - M3I)</h4>
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">01. 中学棟 (M1 - M2・中庭・視聴覚)</h4>
                     <span class="icon-plus text-2xl font-light">+</span>
                 </div>
                 <div class="building-content">
@@ -199,7 +199,7 @@
 
             <div class="building-section" id="section-senior">
                 <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">02. 高校棟 (H1A - H2I)</h4>
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">02. 高校棟 (M3・H1 - H2・部活・PTA)</h4>
                     <span class="icon-plus text-2xl font-light">+</span>
                 </div>
                 <div class="building-content">
@@ -210,33 +210,23 @@
 
             <div class="building-section" id="section-common">
                 <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('common')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">03. 共通棟・部活・委員会</h4>
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">03. 共通棟 (美術・鉄研・図書・各部活)</h4>
                     <span class="icon-plus text-2xl font-light">+</span>
                 </div>
                 <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('図書委員会', '古本市 & 文芸展示', 'dQw4w9WgXcQ', '共通棟 2F 図書館', '毎年恒例の古本市。掘り出し物が見つかるかも？')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">図書委員会</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[図書館]</p></div>
-                                <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
-                            </div>
-                            <h5 class="text-lg font-black italic">古本市 & 文芸展示</h5>
+                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="container-common">
                         </div>
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('鉄道研究部', '鉄道模型展示', 'dQw4w9WgXcQ', '共通棟体育館', '精巧なジオラマとNゲージの走行展示。')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">鉄道研究部</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[共通棟体育館]</p></div>
-                                <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
-                            </div>
-                            <h5 class="text-lg font-black italic">鉄道模型展示</h5>
+                </div>
+            </div>
+
+            <div class="building-section" id="section-other">
+                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('other')">
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">04. その他 (講堂ステージ・グラウンド・フード)</h4>
+                    <span class="icon-plus text-2xl font-light">+</span>
+                </div>
+                <div class="building-content">
+                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="container-other">
                         </div>
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('中学科学部', '科学実験パビリオン', 'dQw4w9WgXcQ', '中学棟 1F 理科室', 'おもしろい科学実験を体験しよう！')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">中学科学部</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[理科室]</p></div>
-                                <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
-                            </div>
-                            <h5 class="text-lg font-black italic">科学実験パビリオン</h5>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -300,72 +290,162 @@
         const TARGET_DATE = new Date("September 26, 2026 09:00:00").getTime();
         let currentProject = "";
 
-        // M1A〜M3I, H1A〜H2Iの企画データを自動生成するための定義
-        const classesLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-        
+        // 提供された最新データに基づく配列定義
+        const juniorClasses = ['M1A', 'M1B', 'M1C', 'M1D', 'M1E', 'M1F', 'M1G', 'M2A', 'M2B', 'M2C', 'M2D', 'M2E', 'M2F', 'M2G'];
+        const seniorClasses = [
+            'M3A', 'M3B', 'M3C', 'M3D', 'M3E', 'M3F', 'M3G',
+            'H1A', 'H1B', 'H1C', 'H1D', 'H1E', 'H1F', 'H1G', 'H1H', 'H1I',
+            'H2A', 'H2B', 'H2C', 'H2D', 'H2E', 'H2F', 'H2G', 'H2H', 'H2I'
+        ];
+
+        const nonClassProjects = [
+            // 中学棟扱い
+            { group: '囲碁将棋部', title: '囲碁将棋部 展示・対局', loc: '予備室３', cat: 'junior', desc: '日頃の盤上研究の成果を披露します。自由に対局できるスペースもあります！' },
+            { group: '中学ハンドボール部', title: '中学ハンドボール部 招待試合', loc: '中学棟中庭', cat: 'junior', desc: '熱い戦いが中庭で繰り広げられます！応援よろしくお願いします！' },
+            { group: '高校ハンドボール部', title: '高校ハンドボール部 招待試合', loc: '中学棟中庭', cat: 'junior', desc: '高校生ならではのスピードと迫力あるハンドボールをぜひご覧ください。' },
+            { group: '教員企画', title: "Johoku teacher's Live", loc: '中学視聴覚室', cat: 'junior', desc: '城北の先生たちがステージに立つ！？普段は見られない特別なライブパフォーマンス。' },
+
+            // 高校棟扱い
+            { group: '歴史部', title: '歴史部研究展示', loc: 'H3F', cat: 'senior', desc: '部員たちが各自のテーマに沿って深く掘り下げた歴史研究レポートの展示です。' },
+            { group: '物理部', title: '物理部パビリオン', loc: '物理室', cat: 'senior', desc: '物理の不思議を体験できる実験や、部員作製の装置展示を行っています。' },
+            { group: '百人一首部', title: '百人一首 競技体験・展示', loc: 'H3H', cat: 'senior', desc: '畳の上で繰り広げられる瞬発力の芸術。競技かるたの魅力を体感してください。' },
+            { group: '釣り部', title: '釣り部活動報告・展示', loc: '国語科ゼミ室', cat: 'senior', desc: '釣果報告や仕掛けの解説など、釣りの魅力をぎゅっと詰め込んだ部屋です。' },
+            { group: '地理部', title: '地理部ジオラマ・研究展示', loc: 'H3C', cat: 'senior', desc: '精巧なマップ分析や、地域研究の成果を分かりやすくグラフィカルに展示。' },
+            { group: '地学部', title: '地学部プラネタリウム・岩石展示', loc: '地学教室・五階コモンスペース', cat: 'senior', desc: '宇宙のロマンや地球の歴史に迫る。五階スペースの特設展示も必見です。' },
+            { group: '生物部', title: '生物部 生き物ワンダーランド', loc: '生物実験室', cat: 'senior', desc: '様々な生物の飼育展示や、日頃の生態観察・実験の成果を発表します。' },
+            { group: '数学研究部', title: '数学研究部 数理パズル・迷宮', loc: 'H3D', cat: 'senior', desc: '面白い数学パズルや難問にチャレンジ！数字の美しさを体験しよう。' },
+            { group: '写真部', title: '写真部 芸術写真展', loc: 'H3E', cat: 'senior', desc: '部員がレンズ越しに切り取った、一瞬の美しさや青春の光景を展示しています。' },
+            { group: '語学部', title: '語学部 グローバル展示', loc: 'H3I', cat: 'senior', desc: '世界の言語や文化を学べる部屋。他国を知る楽しいクイズも用意しています。' },
+            { group: '化学部', title: '化学部 驚異の科学マジック・実験', loc: '第２化学実験室', cat: 'senior', desc: '目の前で色が変わる、炎が出る！安全で楽しい化学実験パフォーマンス。' },
+            { group: '演劇部', title: '演劇部 公演ステージ', loc: 'H3B', cat: 'senior', desc: '魂を込めた演技と作り込まれた脚本で、観客を物語の世界へと誘います。' },
+            { group: 'ラジオ部', title: 'ラジオ部 館内放送・機材展示', loc: '社会科ゼミ室', cat: 'senior', desc: '音響にかける情熱！機材の仕組み解説やオリジナル番組のアーカイブ公開。' },
+            { group: '奇術同好会', title: '奇術同好会 マジックパビリオン', loc: 'ゼミ３１', cat: 'senior', desc: '目の前で繰り広げられる驚異の手品。あなたの目で見破れるか！？' },
+            { group: '山岳ワンダーフォーゲル部', title: '山岳ワンダーフォーゲル部 登山ギア・活動展', loc: 'H3G', cat: 'senior', desc: '日本の名峰に挑んだ軌跡。本格的な登山道具の紹介や山の魅力を語ります。' },
+            { group: '陸上競技部', title: '陸上競技部 栄光の軌跡', loc: 'ゼミ４１', cat: 'senior', desc: '日頃のトレーニング風景や大会記録、スパイク等のギア展示。' },
+            { group: 'デジタル創作部', title: 'デジ創 デジタルアート・自作ゲーム体験', loc: 'PC室', cat: 'senior', desc: '部員がイチから開発した自作PCゲームが遊べる！CGやDTM作品の展示も。' },
+            { group: '歴史総合', title: '歴史総合 授業発表展示', loc: 'ゼミ４１', cat: 'senior', desc: '探究学習「歴史総合」の枠組みで、生徒たちがまとめ上げた優れた成果物の展示。' },
+            { group: '吹奏楽部有志', title: '吹奏楽部有志 アンサンブルコンサート', loc: '高校視聴覚室', cat: 'senior', desc: '少人数ならではの息の合った繊細で美しいハーモニーをお届けします。' },
+            { group: 'オクトパスとステキな小物', title: 'オクトパスとステキな小物（創作展示）', loc: '会議室(高校棟)', cat: 'senior', desc: 'オリジナリティ溢れる素敵なアート作品や小物の展示即売・紹介スペース。' },
+            { group: 'アート倶楽部', title: 'アート倶楽部の作品展示', loc: '会議室(高校棟)', cat: 'senior', desc: '自由な感性で描かれた絵画や造形作品の数々をゆっくりとご鑑賞ください。' },
+            { group: 'PTAサークル 読書会', title: 'PTA読書会 おすすめの一冊紹介', loc: '会議室(高校棟)', cat: 'senior', desc: '保護者の皆様が選んだ、人生を豊かにする書籍の紹介と温かい文芸展示。' },
+            { group: 'PTAサークル 食育の会', title: '食育の会 健康で美味しい毎日', loc: '会議室(高校棟)', cat: 'senior', desc: 'お弁当作りのヒントや、成長期を支える栄養満点な食生活のアイデア展示。' },
+            { group: 'PTAコーラスの会', title: 'PTAコーラス プリマヴェーラ', loc: '会議室(高校棟)', cat: 'senior', desc: '美しい歌声が響く。日頃の練習の成果を込めたハートフルな合唱展示・動画。' },
+            { group: 'Jラウンジ', title: 'Jラウンジ 休憩・交流スペース', loc: '会議室(高校棟)', cat: 'senior', desc: 'どなたでもお立ち寄りいただける安心の休憩所。お気軽にご利用ください。' },
+            { group: '同窓会', title: '同窓会の芋煮汁（展示案内）', loc: '高校棟中庭', cat: 'senior', desc: '伝統の味と、城北OBたちの絆を感じられる中庭の特設ブース。' },
+            { group: '受験生・在校生/PTA親子相談', title: '親子相談室 ★城北グッズ販売中！', loc: '会議室(高校棟)', cat: 'senior', desc: '学校生活や受験の悩みを気軽に相談できるブース。限定グッズも買えるよ！' },
+            { group: '中学理科', title: '中学理科 自由研究・実験成果展', loc: 'ゼミ２１', cat: 'senior', desc: '中学生が夏休みに取り組んだ優秀な自由研究や科学レポートを一挙公開。' },
+            { group: '広報', title: '広報委員会 城北アーカイブス', loc: '数学ゼミ室', cat: 'senior', desc: '城北学園の歴史や、学校パンフレット・広報誌のバックナンバーを閲覧可能。' },
+
+            // 共通棟扱い
+            { group: '美術部', title: '美術部 展覧会', loc: '美術室', cat: 'common', desc: '油絵、水彩画、立体造形など、部員たちが情熱を注いだ大作がずらりと並びます。' },
+            { group: '鉄道研究部', title: '鉄研 鉄道模型巨大ジオラマ', loc: '体育館', cat: 'common', desc: '共通棟体育館に広がる巨大なNゲージ・HOゲージジオラマ。迫力の走行をお見逃しなく！' },
+            { group: '図書委員会', title: '古本市 & 文芸展示', loc: '図書館', cat: 'common', desc: '毎年大人気の古本市。あなただけのお宝本が見つかるかも？文芸誌の展示も同時開催。' },
+            { group: '書道部', title: '書道部 大作展示', loc: '書道教室', cat: 'common', desc: '力強く、また繊細に墨で表現された部員たちの渾身の書が壁一面に並びます。' },
+            { group: '弦楽部', title: '弦楽部 定期ミニコンサート', loc: '器楽室', cat: 'common', desc: 'バイオリンやチェロが織りなす、優雅で美しいクラシックやポップスの弦楽合奏。' },
+            { group: '軽音部', title: '軽音楽部 ガチLIVEパビリオン', loc: '多目的ホール', cat: 'common', desc: 'バンドマンたちが爆音で届ける最高のロックステージ！熱いビートを感じろ！' },
+            { group: 'グリークラブ', title: 'グリークラブ 男声合唱の響き', loc: '声楽室', cat: 'common', desc: '城北ならではの重厚で美しい男声合唱。心に沁み渡る歌声の数々をご堪能ください。' },
+            { group: '書道科', title: '書道科 授業作品展', loc: '和室書道室', cat: 'common', desc: '芸術の授業で生徒たちが一筆入魂で書き上げた秀作・力作の展示コーナー。' },
+
+            // その他扱い（講堂・グラウンドなど）
+            { group: '吹奏楽部', title: '吹奏楽部 迫力のメインステージ', loc: '講堂', cat: 'other', desc: '城北祭最大級の音楽ステージ。大迫力のブラスサウンドが講堂全体を包み込みます。' },
+            { group: 'ダンス部', title: 'ダンス部 explosive stage', loc: '講堂', cat: 'other', desc: '一瞬も目が離せない！磨き上げられたキレキレのダンスと圧倒的フォーメーション。' },
+            { group: '弓道部', title: '弓道部 弓引体験・演武', loc: '弓道場', cat: 'other', desc: '凛とした空気の中で行われる演武。実際に弓を引いてみる体験コーナーも。' },
+            { group: '少林寺拳法部', title: '少林寺拳法部 演武実演', loc: '講堂', cat: 'other', desc: '静と動の美しい技。気迫溢れる演武で観客を魅了します。' },
+            { group: '中学野球部', title: '中学野球部 招待試合', loc: 'グラウンド', cat: 'other', desc: '白球を追う少年たちの青春！全力プレーの招待試合をグラウンドで応援しよう。' },
+            { group: '城北のゆかいなソリストたち', title: '城北のゆかいなソリストたち', loc: '講堂', cat: 'other', desc: '実力派生徒たちが個人ソロやアンサンブルで魅せる、ハイレベルな音楽フェス。' },
+            { group: 'カラオケ大会', title: '全校カラオケ王決定戦', loc: '講堂', cat: 'other', desc: '城北一の歌うまは誰だ！？講堂のステージを揺るがすのど自慢大会。' },
+            { group: 'ミスコン', title: '城北ミスコン（女装コンテスト）', loc: '講堂', cat: 'other', desc: '毎年超満員の大人気企画！驚きのクオリティとユーモア溢れるステージ。' },
+            { group: 'JOY(城北の焼きそば)', title: 'JOY 伝説の焼きそば模擬店', loc: '管理棟前スペース', cat: 'other', desc: 'これぞ学祭の味！香ばしいソースの匂いに誘われる、城北名物の絶品焼きそば。' }
+        ];
+
+        // 企画カード全件自動マッピング・生成
         function generateClassCards() {
             const juniorContainer = document.getElementById('container-junior');
             const seniorContainer = document.getElementById('container-senior');
+            const commonContainer = document.getElementById('container-common');
+            const otherContainer = document.getElementById('container-other');
 
-            // 中学1年〜3年 (M1A - M3I)
-            for (let grade = 1; grade <= 3; grade++) {
-                classesLetters.forEach(letter => {
-                    const className = `M${grade}${letter}`;
-                    const card = document.createElement('div');
-                    card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
-                    card.onclick = () => openDetail(className, `${className}の展示企画`, 'dQw4w9WgXcQ', `中学棟 ${grade}F 教室`, `${className}クラス全員で作り上げた特設体験展示です。ぜひお越しください！`);
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start gap-4 mb-6">
-                            <div class="flex-grow">
-                                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
-                                <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[中学棟 ${grade}F]</p>
-                            </div>
-                            <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">M</span></div>
+            // 1. 中学クラス (M1A - M2G)
+            juniorClasses.forEach(className => {
+                const grade = className.substring(1, 2);
+                const card = document.createElement('div');
+                card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
+                card.onclick = () => openDetail(className, `${className} の展示企画`, 'dQw4w9WgXcQ', `中学棟 ${grade}F 教室`, `${className}クラス全員で作り上げた特設体験展示です。ぜひお越しください！`);
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-4 mb-6">
+                        <div class="flex-grow">
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
+                            <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[中学棟 ${grade}F]</p>
                         </div>
-                        <h5 class="text-lg font-black italic">${className} の企画</h5>
-                    `;
-                    juniorContainer.appendChild(card);
-                });
-            }
+                        <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">M</span></div>
+                    </div>
+                    <h5 class="text-lg font-black italic">${className} の企画</h5>
+                `;
+                juniorContainer.appendChild(card);
+            });
 
-            // 高校1年〜2年 (H1A - H2I)
-            for (let grade = 1; grade <= 2; grade++) {
-                classesLetters.forEach(letter => {
-                    const className = `H${grade}${letter}`;
-                    const card = document.createElement('div');
-                    card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
-                    
-                    // 元々あったH1Iジェットコースターの個別対応
-                    let title = `${className} の企画`;
-                    let desc = `${className}による大型アトラクション・展示企画です。`;
-                    let loc = `高校棟 ${grade}F 教室`;
-                    if (className === 'H1I') {
-                        title = "ジェットコースター";
-                        desc = "はらはらどきどき丈夫なジェットコースター！安全対策もバッチリです。";
-                    }
+            // 2. 高校クラス (M3A - H2I)
+            seniorClasses.forEach(className => {
+                const isM3 = className.startsWith('M3');
+                const bldLabel = isM3 ? '高校棟 (M3)' : '高校棟';
+                const fLabel = className.substring(2, 3) || '3';
+                let title = `${className} の企画`;
+                let desc = `${className}クラスが総力を挙げてプロデュースした大型エンタメ・展示企画です。`;
+                let loc = `${bldLabel} ${className.startsWith('H') ? className.substring(1,2) : '3'}F 教室`;
 
-                    card.onclick = () => openDetail(className, title, 'dQw4w9WgXcQ', loc, desc);
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start gap-4 mb-6">
-                            <div class="flex-grow">
-                                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
-                                <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[高校棟 ${grade}F]</p>
-                            </div>
-                            <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">H</span></div>
+                if (className === 'H1I') {
+                    title = "ジェットコースター";
+                    desc = "はらはらどきどき丈夫なジェットコースター！安全対策もバッチリです。";
+                }
+
+                const card = document.createElement('div');
+                card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
+                card.onclick = () => openDetail(className, title, 'dQw4w9WgXcQ', loc, desc);
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-4 mb-6">
+                        <div class="flex-grow">
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
+                            <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[${loc}]</p>
                         </div>
-                        <h5 class="text-lg font-black italic">${title}</h5>
-                    `;
-                    seniorContainer.appendChild(card);
-                });
-            }
+                        <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">${className.charAt(0)}</span></div>
+                    </div>
+                    <h5 class="text-lg font-black italic">${title}</h5>
+                `;
+                seniorContainer.appendChild(card);
+            });
+
+            // 3. 部活・委員会等ノンクラス企画を正しいエリアへ分配
+            nonClassProjects.forEach(proj => {
+                const card = document.createElement('div');
+                card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
+                card.onclick = () => openDetail(proj.group, proj.title, 'dQw4w9WgXcQ', proj.loc, proj.desc);
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-4 mb-6">
+                        <div class="flex-grow">
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${proj.group}</p>
+                            <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[${proj.loc}]</p>
+                        </div>
+                        <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Club</span></div>
+                    </div>
+                    <h5 class="text-lg font-black italic">${proj.title}</h5>
+                `;
+
+                if (proj.cat === 'junior') juniorContainer.appendChild(card);
+                else if (proj.cat === 'senior') seniorContainer.appendChild(card);
+                else if (proj.cat === 'common') commonContainer.appendChild(card);
+                else if (proj.cat === 'other') otherContainer.appendChild(card);
+            });
         }
 
         function toggleMenu() { 
             document.getElementById('side-menu').classList.toggle('active'); 
         }
 
+        window.addEventListener('DOMContentLoaded', () => {
+            generateClassCards(); 
+        });
+
         window.addEventListener('load', () => {
-            generateClassCards(); // カード生成
             setTimeout(() => { 
                 document.body.classList.add('loaded'); 
                 startCountdown(); 
