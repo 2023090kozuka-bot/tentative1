@@ -58,7 +58,7 @@
         .building-header { background: #0a0a0a; border-bottom: 1px solid #1a1a1a; cursor: pointer; transition: background 0.3s; }
         .building-header:hover { background: #111; }
         .building-content { overflow: hidden; max-height: 0; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .building-section.is-open .building-content { max-height: 3000px; }
+        .building-section.is-open .building-content { max-height: 9999px; }
         .icon-plus { transition: transform 0.4s ease; display: inline-block; }
         .building-section.is-open .icon-plus { transform: rotate(45deg); }
 
@@ -181,70 +181,60 @@
             <h2 class="text-[9px] text-zinc-500 font-black tracking-[0.4em] uppercase mb-2 italic">Project Search</h2>
             <h3 class="text-3xl md:text-5xl font-black mb-8">企画紹介</h3>
             <div class="w-full max-w-md mx-auto">
-                <input type="text" id="project-search" placeholder="企画名や団体名を検索..." class="search-input w-full py-4 text-xl font-bold placeholder:text-zinc-800" onkeyup="filterProjects()">
+                <input type="text" id="project-search" placeholder="クラス名（M1A、H2Iなど）や企画名を検索..." class="search-input w-full py-4 text-xl font-bold placeholder:text-zinc-800" onkeyup="filterProjects()">
             </div>
         </div>
 
         <div class="accordion-container">
             <div class="building-section is-open" id="section-junior">
                 <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('junior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">01. 中学棟</h4>
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">01. 中学棟 (M1A - M3I)</h4>
                     <span class="icon-plus text-2xl font-light">+</span>
                 </div>
                 <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" data-name="なんか企画（試し）" onclick="openDetail('中学科学部', 'なんか企画名', 'dQw4w9WgXcQ', 'M2F教室', 'ためしで作ったサイトなのでここら辺はいったん適当にしています')">
-                            <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow">
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">中学科学部</p>
-                                    <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[中学棟 1F]</p>
-                                </div>
-                                <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
-                            </div>
-                            <h5 class="text-lg font-black italic">なんか企画名</h5>
+                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="container-junior">
                         </div>
-                    </div>
+                </div>
+            </div>
+
+            <div class="building-section" id="section-senior">
+                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">02. 高校棟 (H1A - H2I)</h4>
+                    <span class="icon-plus text-2xl font-light">+</span>
+                </div>
+                <div class="building-content">
+                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="container-senior">
+                        </div>
                 </div>
             </div>
 
             <div class="building-section" id="section-common">
                 <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('common')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">02. 共通棟</h4>
+                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">03. 共通棟・部活・委員会</h4>
                     <span class="icon-plus text-2xl font-light">+</span>
                 </div>
                 <div class="building-content">
                     <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" data-name="図書委員会 古本市 & 文芸展示" onclick="openDetail('図書委員会', '古本市 & 文芸展示', 'dQw4w9WgXcQ', '共通棟 2F 図書館', '毎年恒例の古本市。掘り出し物が見つかるかも？')">
+                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('図書委員会', '古本市 & 文芸展示', 'dQw4w9WgXcQ', '共通棟 2F 図書館', '毎年恒例の古本市。掘り出し物が見つかるかも？')">
                             <div class="flex justify-between items-start gap-4 mb-6">
                                 <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">図書委員会</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[図書館]</p></div>
                                 <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
                             </div>
                             <h5 class="text-lg font-black italic">古本市 & 文芸展示</h5>
                         </div>
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" data-name="高校鉄道研究部 鉄道模型展示" onclick="openDetail('鉄道研究部', '鉄道模型展示', 'dQw4w9WgXcQ', '共通棟体育館', '精巧なジオラマとNゲージの走行展示。')">
+                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('鉄道研究部', '鉄道模型展示', 'dQw4w9WgXcQ', '共通棟体育館', '精巧なジオラマとNゲージの走行展示。')">
                             <div class="flex justify-between items-start gap-4 mb-6">
                                 <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">鉄道研究部</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[共通棟体育館]</p></div>
                                 <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
                             </div>
                             <h5 class="text-lg font-black italic">鉄道模型展示</h5>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="building-section" id="section-senior">
-                <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
-                    <h4 class="text-xl md:text-3xl font-black italic tracking-tighter uppercase">03. 高校棟</h4>
-                    <span class="icon-plus text-2xl font-light">+</span>
-                </div>
-                <div class="building-content">
-                    <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" data-name="H1I ジェットコースター" onclick="openDetail('H1I', 'ジェットコースター', 'dQw4w9WgXcQ', 'H1I教室', 'はらはらどきどき丈夫なジェットコースター')">
+                        <div class="project-card bg-zinc-950 p-8 border border-zinc-900 group" onclick="openDetail('中学科学部', '科学実験パビリオン', 'dQw4w9WgXcQ', '中学棟 1F 理科室', 'おもしろい科学実験を体験しよう！')">
                             <div class="flex justify-between items-start gap-4 mb-6">
-                                <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">H1I</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[H1I教室]</p></div>
+                                <div class="flex-grow"><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">中学科学部</p><p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[理科室]</p></div>
                                 <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">Icon</span></div>
                             </div>
-                            <h5 class="text-lg font-black italic">ジェットコースター</h5>
+                            <h5 class="text-lg font-black italic">科学実験パビリオン</h5>
                         </div>
                     </div>
                 </div>
@@ -310,10 +300,76 @@
         const TARGET_DATE = new Date("September 26, 2026 09:00:00").getTime();
         let currentProject = "";
 
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+        // M1A〜M3I, H1A〜H2Iの企画データを自動生成するための定義
+        const classesLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+        
+        function generateClassCards() {
+            const juniorContainer = document.getElementById('container-junior');
+            const seniorContainer = document.getElementById('container-senior');
+
+            // 中学1年〜3年 (M1A - M3I)
+            for (let grade = 1; grade <= 3; grade++) {
+                classesLetters.forEach(letter => {
+                    const className = `M${grade}${letter}`;
+                    const card = document.createElement('div');
+                    card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
+                    card.onclick = () => openDetail(className, `${className}の展示企画`, 'dQw4w9WgXcQ', `中学棟 ${grade}F 教室`, `${className}クラス全員で作り上げた特設体験展示です。ぜひお越しください！`);
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start gap-4 mb-6">
+                            <div class="flex-grow">
+                                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
+                                <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[中学棟 ${grade}F]</p>
+                            </div>
+                            <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">M</span></div>
+                        </div>
+                        <h5 class="text-lg font-black italic">${className} の企画</h5>
+                    `;
+                    juniorContainer.appendChild(card);
+                });
+            }
+
+            // 高校1年〜2年 (H1A - H2I)
+            for (let grade = 1; grade <= 2; grade++) {
+                classesLetters.forEach(letter => {
+                    const className = `H${grade}${letter}`;
+                    const card = document.createElement('div');
+                    card.className = "project-card bg-zinc-950 p-8 border border-zinc-900 group";
+                    
+                    // 元々あったH1Iジェットコースターの個別対応
+                    let title = `${className} の企画`;
+                    let desc = `${className}による大型アトラクション・展示企画です。`;
+                    let loc = `高校棟 ${grade}F 教室`;
+                    if (className === 'H1I') {
+                        title = "ジェットコースター";
+                        desc = "はらはらどきどき丈夫なジェットコースター！安全対策もバッチリです。";
+                    }
+
+                    card.onclick = () => openDetail(className, title, 'dQw4w9WgXcQ', loc, desc);
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start gap-4 mb-6">
+                            <div class="flex-grow">
+                                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">${className}</p>
+                                <p class="text-sm font-bold text-zinc-600 uppercase tracking-tighter">[高校棟 ${grade}F]</p>
+                            </div>
+                            <div class="project-icon-placeholder"><span class="text-[12px] text-zinc-700 font-bold uppercase italic">H</span></div>
+                        </div>
+                        <h5 class="text-lg font-black italic">${title}</h5>
+                    `;
+                    seniorContainer.appendChild(card);
+                });
+            }
+        }
+
+        function toggleMenu() { 
+            document.getElementById('side-menu').classList.toggle('active'); 
+        }
 
         window.addEventListener('load', () => {
-            setTimeout(() => { document.body.classList.add('loaded'); startCountdown(); }, 1000);
+            generateClassCards(); // カード生成
+            setTimeout(() => { 
+                document.body.classList.add('loaded'); 
+                startCountdown(); 
+            }, 1000);
             const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }), {threshold: 0.1});
             document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
         });
@@ -329,19 +385,22 @@
         }
 
         function switchTab(day) {
+            const e = window.event || arguments.callee.caller.arguments[0];
             document.querySelectorAll('.schedule-tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            e.currentTarget.classList.add('active');
             document.querySelectorAll('.schedule-content').forEach(c => c.classList.remove('active'));
             document.getElementById('schedule-' + day).classList.add('active');
         }
 
-        function toggleBuilding(id) { document.getElementById('section-'+id).classList.toggle('is-open'); }
+        function toggleBuilding(id) { 
+            document.getElementById('section-'+id).classList.toggle('is-open'); 
+        }
 
         function filterProjects() {
             const query = document.getElementById('project-search').value.toLowerCase();
             document.querySelectorAll('.project-card').forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                card.style.display = name.includes(query) ? 'block' : 'none';
+                const content = card.textContent.toLowerCase();
+                card.style.display = content.includes(query) ? 'block' : 'none';
             });
         }
 
@@ -350,12 +409,15 @@
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-location').innerText = loc + " (" + group + ")";
             document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-video').src = `https://www.youtube.com/embed/$6{vid}`;
+            document.getElementById('modal-video').src = `https://www.youtube.com/embed/${vid}`;
             document.getElementById('detail-modal').classList.add('active');
             updateVoteBtnUI();
         }
 
-        function closeDetail() { document.getElementById('detail-modal').classList.remove('active'); document.getElementById('modal-video').src = ""; }
+        function closeDetail() { 
+            document.getElementById('detail-modal').classList.remove('active'); 
+            document.getElementById('modal-video').src = ""; 
+        }
 
         function toggleVote() {
             let votes = JSON.parse(localStorage.getItem('j_votes')) || {};
@@ -374,9 +436,11 @@
         function updateVoteBtnUI() {
             const btn = document.getElementById('vote-btn');
             if(localStorage.getItem('voted_' + currentProject)) {
-                btn.innerText = "投票を取り消す"; btn.className = "w-full py-4 bg-zinc-800 text-white font-black italic";
+                btn.innerText = "投票を取り消す"; 
+                btn.className = "w-full py-4 bg-zinc-800 text-white font-black italic";
             } else {
-                btn.innerText = "この企画に投票する"; btn.className = "w-full py-4 bg-white text-black font-black italic";
+                btn.innerText = "この企画に投票する"; 
+                btn.className = "w-full py-4 bg-white text-black font-black italic";
             }
         }
 
@@ -384,7 +448,9 @@
             if(document.getElementById('admin-pass').value === 'Johoku') {
                 document.getElementById('admin-panel').classList.remove('hidden');
                 renderResults();
-            } else { alert('パスワードが違います'); }
+            } else { 
+                alert('パスワードが違います'); 
+            }
         }
 
         function renderResults() {
@@ -401,3 +467,4 @@
     </script>
 </body>
 </html>
+
