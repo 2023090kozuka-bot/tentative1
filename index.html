@@ -16,28 +16,36 @@
             flex-direction: column;
             min-height: 100vh;
         }
+
+        /* 背景オーロラが滑らかに揺らめくアニメーション */
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
        
         /* 灘校サイトのような、奥行きのある高級な光の溜まり（オーロラ効果）を表現 */
         .bg-poster-blue {
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 102, 255, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at 10% 20%, rgba(0, 102, 255, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
                 linear-gradient(180deg, #020617 0%, #0b1329 50%, #020617 100%);
+            background-size: 200% 200%;
+            animation: aurora 18s ease infinite;
         }
  
         /* 
           ==================================================================
-          【全ページ共通・背景画像カスタマイズエリア】
+          【全ページ共通・背景画像カスタマイズ】
           アクセス・お知らせ、および各タブページの背景に使用される画像です。
-          お好きな背景画像に差し替える場合は、下の url('背景画像.png') の
-          '背景画像.png' の部分をお手持ちの画像ファイル名（例: 'img/bg.jpg' 等）に
-          書き換えて変更してください。
+          お好きな背景画像に差し替える場合は、下の url('背景画像.png') を
+          お手持ちの画像ファイルパス（例: url('img/bg_johoku.jpg') など）に変更してください。
           ==================================================================
         */
         .custom-page-bg {
             background-image: 
                 linear-gradient(to bottom, rgba(2, 6, 23, 0.9) 0%, rgba(11, 19, 41, 0.94) 100%), 
-                url('背景画像.png'); /* ← ★ここをお好きな背景画像名に変更してください★ */
+                url('背景画像.png'); /* ← ここを好きな画像ファイル名に変更してください */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -160,14 +168,51 @@
         #detail-modal-card { transform: scale(0.95); opacity: 0; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         #detail-modal.active #detail-modal-card { transform: scale(1); opacity: 1; }
        
-        /* スクロール時のなめらかな3D浮き上がりアニメーション */
-        .reveal { opacity: 0; transform: translateY(40px) scale(0.99); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+        /* スクロール時のなめらかな3D浮き上がりアニメーション（傾きとスケールを追加） */
+        .reveal { 
+            opacity: 0; 
+            transform: translateY(40px) rotateX(4deg) scale(0.97); 
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .reveal.active { opacity: 1; transform: translateY(0) rotateX(0) scale(1); }
  
         .project-icon-placeholder { width: 80px; height: 80px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; flex-shrink: 0; transition: all 0.4s ease; }
-        .project-card { cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255,255,255,0.05); background: rgba(15, 23, 42, 0.25); backdrop-filter: blur(8px); border-radius: 12px; }
-        .project-card:hover { background-color: rgba(30, 41, 59, 0.4); transform: translateY(-6px); border-color: rgba(0, 240, 255, 0.3); box-shadow: 0 15px 35px -10px rgba(0, 102, 255, 0.25); }
+        
+        /* 企画カード：光彩・浮き上がり・ネオン感のカスタムCSS */
+        .project-card { 
+            position: relative;
+            overflow: hidden;
+            cursor: pointer; 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            border: 1px solid rgba(255,255,255,0.04); 
+            background: rgba(15, 23, 42, 0.25); 
+            backdrop-filter: blur(12px); 
+            border-radius: 12px; 
+        }
+        /* カーソル追従用のグラデーションレイヤー */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 240, 255, 0.08) 0%, transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        .project-card:hover { 
+            background-color: rgba(30, 41, 59, 0.4); 
+            transform: translateY(-8px) scale(1.01); 
+            border-color: rgba(0, 240, 255, 0.3); 
+            box-shadow: 0 20px 40px -15px rgba(0, 102, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.05); 
+        }
         .project-card:hover .project-icon-placeholder { border-color: rgba(0, 240, 255, 0.2); background: rgba(30, 41, 59, 0.8); }
+        
         .search-input { background: transparent; border-bottom: 1px solid rgba(255,255,255,0.1); transition: all 0.4s ease; outline: none; text-align: center; border-radius: 0; }
         .search-input:focus { border-bottom-color: #00f0ff; box-shadow: 0 4px 20px -10px rgba(0, 240, 255, 0.2); }
        
@@ -177,7 +222,7 @@
         .rank-badge { font-style: italic; font-weight: 900; text-shadow: 0 0 8px rgba(0,240,255,0.4); }
 
 
-        /* ヘッダーナビゲーションボタンスタイル */
+        /* ヘッダーナビゲーションボタン（Polaris風アンダーラインアニメーション） */
         .nav-btn {
             position: relative;
             padding: 0.5rem 1.25rem;
@@ -185,7 +230,19 @@
             font-size: 1.05rem;
             letter-spacing: 0.05em;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border-bottom: 2px solid transparent;
+        }
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 50%;
+            width: 0; height: 2px;
+            background-color: #00f0ff;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px #00f0ff;
+        }
+        .nav-btn:hover::after, .nav-btn.active::after {
+            width: 80%;
         }
         .nav-btn:hover {
             color: #00f0ff;
@@ -220,16 +277,14 @@
             <div class="leading-none font-bold tracking-[0.2em] text-xs md:text-sm uppercase text-slate-300">JOHOKU FES <span class="text-[#00f0ff] font-black">2026</span></div>
         </div>
 
-
         <!-- PC向け右上の5つのメインナビゲーションボタン（企画一覧・投票に変更、大文字化） -->
         <nav class="hidden lg:flex items-center space-x-6 text-sm">
-            <button class="nav-btn nav-btn-home text-[#00f0ff] border-[#00f0ff]" onclick="switchPage('home')">ホーム</button>
-            <button class="nav-btn nav-btn-timetable text-slate-400 border-transparent" onclick="switchPage('timetable')">タイムテーブル</button>
-            <button class="nav-btn nav-btn-food text-slate-400 border-transparent" onclick="switchPage('food')">食堂・キッチンカー</button>
-            <button class="nav-btn nav-btn-groups text-slate-400 border-transparent" onclick="switchPage('groups')">企画一覧・投票</button>
-            <button class="nav-btn nav-btn-map text-slate-400 border-transparent" onclick="switchPage('map')">3Dマップ</button>
+            <button class="nav-btn nav-btn-home active text-[#00f0ff]" onclick="switchPage('home')">ホーム</button>
+            <button class="nav-btn nav-btn-timetable text-slate-400" onclick="switchPage('timetable')">タイムテーブル</button>
+            <button class="nav-btn nav-btn-food text-slate-400" onclick="switchPage('food')">食堂・キッチンカー</button>
+            <button class="nav-btn nav-btn-groups text-slate-400" onclick="switchPage('groups')">企画一覧・投票</button>
+            <button class="nav-btn nav-btn-map text-slate-400" onclick="switchPage('map')">3Dマップ</button>
         </nav>
-
 
         <button onclick="toggleMenu()" class="space-y-1.5 p-2 group">
             <div class="w-6 h-0.5 bg-slate-300 transition-all group-hover:w-8 group-hover:bg-[#00f0ff]"></div>
@@ -252,7 +307,7 @@
               書き換えて変更してください。
               ==================================================================
             -->
-            <img src="未完成ポスター.png" alt="第85回 城北祭 男前 ポスター" class="hero-bg-img"> <!-- ← ★ここをお好きなポスター画像名に変更してください★ -->
+            <img src="ポスター切り取り.png" alt="第85回 城北祭 男前 ポスター" class="hero-bg-img"> <!-- ← ★ここをお好きなポスター画像名に変更してください★ -->
             <div class="hero-overlay"></div>
             
             <div class="hero-content-wrap reveal px-6">
@@ -300,8 +355,8 @@
         -->
         <div class="custom-page-bg py-24 md:py-36">
             
-            <!-- アクセスセクション（文字サイズをさらに大きく、明るく、枠線（border）を排除） -->
-            <section id="access-home" class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-36">
+            <!-- アクセスセクション（横幅を最大化 w-full max-w-[1600px]、レスポンシブ崩れ対策 px-4 md:px-12） -->
+            <section id="access-home" class="w-full max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-36">
                 <div class="reveal">
                     <h2 class="text-xs md:text-sm text-[#00f0ff] font-bold tracking-[0.4em] uppercase mb-4 italic">Location</h2>
                     <h3 class="text-4xl md:text-6xl font-black mb-8 text-white">アクセス</h3>
@@ -324,9 +379,9 @@
             </section>
 
 
-            <!-- お知らせ＆イベント・落とし物セクション（文字サイズをさらに大きく、枠線を外してスタイリッシュに） -->
-            <section id="news-home" class="max-w-6xl mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 reveal">
+            <!-- お知らせ＆イベント・落とし物セクション（横幅を最大化 w-full max-w-[1600px]、左右余白を大きく調整） -->
+            <section id="news-home" class="w-full max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 reveal">
                     <div>
                         <h2 class="text-xs md:text-sm text-[#00f0ff] font-bold tracking-[0.4em] uppercase mb-4 italic">Information</h2>
                         <h3 class="text-3xl md:text-5xl font-black mb-8 text-white">お知らせ</h3>
@@ -368,7 +423,7 @@
     <!-- 【タイムテーブル】ページコンテナ (初期非表示)               -->
     <!-- ========================================================== -->
     <main id="page-timetable" class="w-full pt-[73px] custom-page-bg hidden flex-grow py-16 px-4 md:px-8">
-        <section class="max-w-[1400px] mx-auto">
+        <section class="max-w-[1600px] mx-auto">
             <div class="reveal text-center mb-16">
                 <h2 class="text-[10px] md:text-xs text-slate-500 font-bold tracking-[0.4em] uppercase mb-2 italic">Timeline</h2>
                 <h3 class="text-4xl md:text-6xl font-black mb-10 text-slate-100">スケジュール</h3>
@@ -412,7 +467,7 @@
     <!-- 【食堂・キッチンカー】ページコンテナ (初期非表示)         -->
     <!-- ========================================================== -->
     <main id="page-food" class="w-full pt-[73px] custom-page-bg hidden flex-grow py-16 px-4 md:px-8">
-        <section class="max-w-4xl mx-auto reveal text-center">
+        <section class="max-w-[1600px] mx-auto reveal text-center px-4 md:px-12">
             <h2 class="text-[10px] md:text-xs text-[#0066ff] font-bold tracking-[0.4em] uppercase mb-2 italic">Food & Drink</h2>
             <h3 class="text-4xl md:text-6xl font-black mb-10 text-slate-100">食堂・キッチンカー</h3>
            
@@ -452,48 +507,49 @@
                 </div>
             </div>
      
-            <div class="accordion-container">
+            <!-- 企画一覧のアコーディオン幅を横幅ぎりぎり（最大w-[1600px]）に再設計し、余白を適切にレスポンシブ化 -->
+            <div class="accordion-container w-full max-w-[1600px] mx-auto">
                 <!-- 中学棟も初期は閉じた状態に設定（is-openクラスを削除） -->
                 <div class="building-section" id="section-junior">
-                    <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('junior')">
+                    <div class="building-header px-4 md:px-12 lg:px-16 py-10 flex justify-between items-center" onclick="toggleBuilding('junior')">
                         <h4 class="text-xl md:text-3xl font-black tracking-wider uppercase text-slate-200">01. 中学棟 <span class="text-sm md:text-base text-slate-500 ml-2 font-normal">(M1 - M2・中庭・視聴覚)</span></h4>
                         <span class="icon-plus text-2xl font-light">+</span>
                     </div>
                     <div class="building-content">
-                        <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-junior">
+                        <div class="px-4 md:px-12 lg:px-16 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-junior">
                         </div>
                     </div>
                 </div>
      
                 <div class="building-section" id="section-senior">
-                    <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
+                    <div class="building-header px-4 md:px-12 lg:px-16 py-10 flex justify-between items-center" onclick="toggleBuilding('senior')">
                         <h4 class="text-xl md:text-3xl font-black tracking-wider uppercase text-slate-200">02. 高校棟 <span class="text-sm md:text-base text-slate-500 ml-2 font-normal">(M3・H1 - H2・部活・PTA)</span></h4>
                         <span class="icon-plus text-2xl font-light">+</span>
                     </div>
                     <div class="building-content">
-                        <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-senior">
+                        <div class="px-4 md:px-12 lg:px-16 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-senior">
                         </div>
                     </div>
                 </div>
      
                 <div class="building-section" id="section-common">
-                    <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('common')">
+                    <div class="building-header px-4 md:px-12 lg:px-16 py-10 flex justify-between items-center" onclick="toggleBuilding('common')">
                         <h4 class="text-xl md:text-3xl font-black tracking-wider uppercase text-slate-200">03. 共通棟 <span class="text-sm md:text-base text-slate-500 ml-2 font-normal">(美術・鉄研・図書・各部活)</span></h4>
                         <span class="icon-plus text-2xl font-light">+</span>
                     </div>
                     <div class="building-content">
-                        <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-common">
+                        <div class="px-4 md:px-12 lg:px-16 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-common">
                         </div>
                     </div>
                 </div>
      
                 <div class="building-section" id="section-other">
-                    <div class="building-header px-6 md:px-24 py-10 flex justify-between items-center" onclick="toggleBuilding('other')">
+                    <div class="building-header px-4 md:px-12 lg:px-16 py-10 flex justify-between items-center" onclick="toggleBuilding('other')">
                         <h4 class="text-xl md:text-3xl font-black tracking-wider uppercase text-slate-200">04. その他 <span class="text-sm md:text-base text-slate-500 ml-2 font-normal">(講堂・グラウンド・フードなど)</span></h4>
                         <span class="icon-plus text-xl font-light">+</span>
                     </div>
                     <div class="building-content">
-                        <div class="px-6 md:px-24 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-other">
+                        <div class="px-4 md:px-12 lg:px-16 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="container-other">
                         </div>
                     </div>
                 </div>
@@ -506,7 +562,7 @@
     <!-- 【3Dマップ】ページコンテナ (初期非表示)                    -->
     <!-- ========================================================== -->
     <main id="page-map" class="w-full pt-[73px] custom-page-bg hidden flex-grow py-16 px-4 md:px-8">
-        <section class="max-w-5xl mx-auto text-center reveal">
+        <section class="max-w-[1600px] mx-auto text-center reveal px-4 md:px-12">
             <h2 class="text-[10px] md:text-xs text-[#0066ff] font-bold tracking-[0.4em] uppercase mb-2 italic">Floor Map</h2>
             <h3 class="text-4xl md:text-6xl font-black mb-10 text-slate-100">3Dマップ / 校内図</h3>
             <div class="w-full bg-slate-900/10 border border-slate-800 p-8 relative aspect-video flex items-center justify-center rounded-2xl shadow-2xl">
@@ -578,7 +634,7 @@
             </div>
 
 
-            <!-- 管理者ログインを最下部に下げず、共通フッターの同じメイン階層内にスッキリと配置 -->
+            <!-- 管理者ログインを最下部に下げず、共通フッター of 同じメイン階層内にスッキリと配置 -->
             <div class="w-full md:w-auto max-w-xs md:max-w-none flex items-center gap-2 border-t md:border-t-0 border-white/10 pt-6 md:pt-0">
                 <span class="text-[9px] font-bold text-slate-400 tracking-widest uppercase italic shrink-0 hidden lg:inline-block">ADMIN:</span>
                 <input type="password" id="admin-pass" placeholder="PASSWORD" class="bg-slate-900/60 border border-white/10 text-xs rounded-lg px-3 py-2 text-white focus:border-[#0066ff] outline-none transition w-36">
@@ -601,7 +657,7 @@
                         <h4 id="modal-title" class="text-2xl font-black mb-4 text-white"></h4>
                         <p id="modal-location" class="text-xs text-slate-500 mb-4 font-bold border-l border-slate-700 pl-3"></p>
                         <p id="modal-desc" class="text-sm text-slate-400 leading-relaxed mb-8 flex-grow"></p>
-                        <button id="vote-btn" onclick="toggleVote()" class="w-full py-4 bg-white text-black font-bold tracking-wider rounded-xl transition">この企画に投票する</button>
+                        <button id="vote-btn" onclick="toggleVote()" class="w-full py-4 bg-white text-black font-bold tracking-wider rounded-xl transition font-black">この企画に投票する</button>
                     </div>
             </div>
         </div>
@@ -623,7 +679,7 @@
             { group: '囲碁将棋部', title: '囲碁将棋部 展示・対局', loc: '予備室３', cat: 'junior', type: 'exhibition', desc: '日頃 of 盤上研究の成果を披露。自由に対局できるスペースもあります！' },
             { group: '中学ハンドボール部', title: '中学ハンドボール部 招待試合', loc: '中学棟中庭', cat: 'junior', type: 'exhibition', desc: '熱い戦いが中庭で繰り広げられます！応援よろしくお願いします！' },
             { group: '高校ハンドボール部', title: '高校ハンドボール部 招待試合', loc: '中学棟中庭', cat: 'junior', type: 'exhibition', desc: '高校生ならではのスピードと迫力あるハンドボールをぜひご覧ください。' },
-            { group: '教員企画', title: "Johoku teacher's Live", loc: '中学視聴覚室', cat: 'junior', type: 'exhibition', desc: '城北の先生たちがステージに立つ！？普段は見られない特別なライブパフォーマンス。' },
+            { group: '教員企画', title: "Johoku teacher's Live", loc: '中学視聴覚室', cat: 'junior', type: 'exhibition', desc: '城北の先生たちがステージに立つ！？普段は見られない特別なライブパフォーマンス。' },
             { group: '歴史部', title: '歴史部研究展示', loc: 'H3F', cat: 'senior', type: 'exhibition', desc: '部員たちが各自のテーマに沿って深く掘り下げた歴史研究レポートの展示です。' },
             { group: '物理部', title: '物理部パビリオン', loc: '物理室', cat: 'senior', type: 'exhibition', desc: '物理の不思議を体験できる実験や、部員作製の装置展示を行っています。' },
             { group: '百人一首部', title: '百人一首 競技体験・展示', loc: 'H3H', cat: 'senior', type: 'exhibition', desc: '畳の上で繰り広げられる瞬発力の芸術。競技かるたの魅力を体感してください。' },
@@ -668,7 +724,7 @@
             { group: '中学野球部', title: '中学野球部 招待試合', loc: 'グラウンド', cat: 'other', type: 'exhibition', desc: '白球を追う少年たちの青春！全力プレーの招待試合。' },
             { group: '城北のゆかいなソリストたち', title: '城北のゆかいなソリストたち', loc: '講堂', cat: 'other', type: 'exhibition', desc: '実力派生徒たちが個人ソロやアンサンブルで魅せる音楽フェス。' },
             { group: 'カラオケ大会', title: '全校カラオケ王決定戦', loc: '講堂', cat: 'other', type: 'exhibition', desc: '城北一の歌うまは誰だ！？講堂のステージを揺るがす大会。' },
-            { group: 'ミスコン', title: '城北ミスコン（女装コンテスト）', loc: '講堂', cat: 'other', type: 'exhibition', desc: '毎年超満員の大人気企画！驚きのクオリティとユーモア。' },
+            { group: 'ミスコン', title: '城白ミスコン（女装コンテスト）', loc: '講堂', cat: 'other', type: 'exhibition', desc: '毎年超満員の大人気企画！驚きのクオリティとユーモア。' },
             { group: 'JOY(城北の焼きそば)', title: 'JOY 伝説の焼きそば模擬店', loc: '管理棟前スペース', cat: 'other', type: 'food', desc: 'これぞ学祭の味！香ばしいソースの匂いに誘われる焼きそば。' }
         ];
  
@@ -803,21 +859,6 @@
             });
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /* 舞い散る青い光の粒子を動的に生成 */
         function createPetals() {
             const container = document.body;
@@ -844,6 +885,7 @@
             setTimeout(() => {
                 document.body.classList.add('loaded');
                     startCountdown();
+                    initCardEffects(); // 動的カードに対するマウスエフェクトを有効化
             }, 1000);
             const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }), {threshold: 0.1});
             document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
@@ -995,7 +1037,7 @@
  
             const allVotes = Object.entries(votes).map(([name, count]) => ({
                     name, count, type: projectTypeMap[name] || 'exhibition'
-                }));
+            }));
  
             const sortedTotal = [...allVotes].sort((a, b) => b.count - a.count);
             renderList(sortedTotal, totalRes);
@@ -1029,21 +1071,6 @@
             });
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /* 5つのメインページをSPAとして表示切り替えするJavaScript関数 */
         function switchPage(pageId) {
             const pages = ['home', 'timetable', 'food', 'groups', 'map'];
@@ -1058,48 +1085,31 @@
             const targetEl = document.getElementById('page-' + pageId);
             if(targetEl) targetEl.classList.remove('hidden');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             // ヘッダーナビゲーションボタンのアクティブ状態のスタイルの切り替え
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-[#00f0ff]', 'border-[#00f0ff]');
+                btn.classList.remove('text-[#00f0ff]', 'border-[#00f0ff]', 'active');
                 btn.classList.add('text-slate-400', 'border-transparent');
             });
             document.querySelectorAll('.nav-btn-' + pageId).forEach(btn => {
                 btn.classList.remove('text-slate-400', 'border-transparent');
-                btn.classList.add('text-[#00f0ff]', 'border-[#00f0ff]');
+                btn.classList.add('text-[#00f0ff]', 'active');
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             // ページ上部へスクロール
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* カードに対するマウス追従型光彩エフェクトのリアルタイム処理 */
+        function initCardEffects() {
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
         }
     </script>
 </body>
